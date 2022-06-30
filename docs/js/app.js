@@ -23,15 +23,11 @@ const { touchBegan, touchMoved, touchEnded } = {
     typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup',
 };
 
-
-
-
 (function () {
   let onDOMContentLoaded = function () {
-  const playButton = createButton('play');
+    const playButton = createButton('play');
 
-
-document.body.appendChild(playButton);
+    document.body.appendChild(playButton);
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     try {
       // Create the instance of AudioContext
@@ -85,7 +81,7 @@ document.body.appendChild(playButton);
       //EventWrapper.CLICK,
       touchBegan,
       function () {
-      console.log(this);
+        console.log(this);
         if (isStop) {
           // Create the instance of OscillatorNode
           oscillator = context.createOscillator();
@@ -150,3 +146,4 @@ document.body.appendChild(playButton);
     document.addEventListener('DOMContentLoaded', onDOMContentLoaded, true);
   }
 })();
+

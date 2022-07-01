@@ -17,11 +17,19 @@ const context = new AudioContext();
 const oscillator = context.createOscillator();
 oscillator.connect(context.destination);
 oscillator.start(0);
+
+
+
 // todo: 着火のおまじない
 function initAudioContext() {
+  console.log(this);
   document.removeEventListener(touchEnded, initAudioContext);
   // wake up AudioContext
   context.resume();
+  // Stop sound (after 5 sec)
+window.setTimeout(function() {
+    oscillator.stop(0);
+}, 5000);
 }
 
 document.addEventListener(touchEnded, initAudioContext);

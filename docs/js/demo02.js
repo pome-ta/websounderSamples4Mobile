@@ -29,4 +29,3 @@ const initAudioContext = () => {
   }, 1000);
 };
 document.addEventListener(touchEnded, initAudioContext);
-

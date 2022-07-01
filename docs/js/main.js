@@ -1,4 +1,3 @@
-
 'use strict';
 
 // todo: MouseEvent TouchEvent wrapper
@@ -20,15 +19,13 @@ oscillator.connect(context.destination);
 oscillator.start(0);
 
 // todo: 着火のおまじない
-function initAudioContext() {
-  console.log(this);
+const initAudioContext = () => {
   document.removeEventListener(touchEnded, initAudioContext);
   // wake up AudioContext
   context.resume();
-  // Stop sound (after 5 sec)
-  window.setTimeout(function () {
+  // Stop sound (after 1 sec)
+  window.setTimeout(() => {
     oscillator.stop(0);
-  }, 5000);
-}
-
+  }, 1000);
+};
 document.addEventListener(touchEnded, initAudioContext);

@@ -1,5 +1,99 @@
 'use strict';
 
+/* util funcs */
+function capitalize(str) {
+  if (typeof str !== 'string' || !str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+function getDecimalPointLength(valueStr) {
+  const numbers = valueStr.split('.');
+  const pointLen = numbers[1] ? numbers[1].length : 0;
+  // xxx: 0 で、返したものを1 で返してる
+  return pointLen ? pointLen : 1;
+}
+
+function parseNum(value, numtype = 'float') {
+  return numtype === 'int'
+    ? Number.parseInt(value)
+    : Number.parseFloat(value).toFixed(getDecimalPointLength(value));
+}
+
+/* create document node element funcs */
+function createButton(idName, textContent = null) {
+  const element = document.createElement('button');
+  element.style.width = '100%';
+  element.style.height = '4rem';
+  element.type = 'button';
+  element.id = idName;
+  element.textContent = textContent;
+  return element;
+}
+
+function createInputRange({ id, min, max, value, numtype, step = 1 }) {
+  const element = document.createElement('input');
+  element.type = 'range';
+  element.id = id;
+  element.min = min;
+  element.max = max;
+  element.step = step;
+  element.value = value;
+  element.numtype = numtype;
+  element.style.width = '100%';
+  element.style.height = '2rem';
+  return element;
+}
+
+function setAppendChild(nodes, parentNode = document.body) {
+  let preNode = parentNode;
+  nodes.forEach((node) => {
+    Array.isArray(node)
+      ? setAppendChild(node, preNode)
+      : parentNode.appendChild(node);
+    preNode = node;
+  });
+}
+
+function tapAction() {
+  // xxx: [0, 1] の繰り返しなので、ビット排他的理論和処理。無駄に
+  const xor = labelValues.indexOf(this.textContent) ^ 1;
+  this.textContent = labelValues[xor];
+}
+
+/* setup document node element */
+const mainTitleHeader = document.createElement('h1');
+mainTitleHeader.textContent = 'GainNode';
+
+const buttonWrap = document.createElement('div');
+buttonWrap.style.width = '100%';
+const labelValues = ['Play', 'Pause'];
+const captionPlayPause = document.createTextNode(labelValues.join(' / '));
+const soundButton = createButton('sound', labelValues[0]);
+
+const sliderWrap = document.createElement('div');
+sliderWrap.style.width = '100%';
+const captionSlider = document.createTextNode('volume: ');
+const sliderValue = document.createElement('span');
+sliderValue.textContent = '0.0';
+
+const sliderRange = createInputRange({
+  id: 'range-volume',
+  min: 0.0,
+  max: 1.0,
+  step: 0.05,
+  value: 1.0,
+  numtype: 'float',
+});
+
+setAppendChild([
+  mainTitleHeader,
+  buttonWrap,
+  [captionPlayPause, soundButton],
+  sliderWrap,
+  [captionSlider, sliderValue],
+  sliderRange,
+]);
+
 // todo: MouseEvent TouchEvent wrapper
 const { touchBegan, touchMoved, touchEnded } = {
   touchBegan:
@@ -10,22 +104,13 @@ const { touchBegan, touchMoved, touchEnded } = {
     typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup',
 };
 
+soundButton.addEventListener(touchBegan, tapAction);
 /* audio */
 // xxx: prefix は無し
 const context = new AudioContext();
-
+const gain = context.createGain();
 const oscillator = context.createOscillator();
-oscillator.connect(context.destination);
-oscillator.start(0);
 
-// todo: 着火のおまじない
-const initAudioContext = () => {
-  document.removeEventListener(touchEnded, initAudioContext);
-  // wake up AudioContext
-  context.resume();
-  // Stop sound (after 1 sec)
-  window.setTimeout(() => {
-    oscillator.stop(0);
-  }, 1000);
-};
-document.addEventListener(touchEnded, initAudioContext);
+oscillator.connect(gain);
+gain.connect(context.destination);
+gain.gain.value = 0.5; // Set volume at 0.5

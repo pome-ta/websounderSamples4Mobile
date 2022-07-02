@@ -84,6 +84,13 @@ function controlVolume() {
   }
 }
 
+async function LoadSample(actx, url) {
+  const res = await fetch(url);
+  const arraybuf = await res.arrayBuffer();
+  return actx.decodeAudioData(arraybuf);
+}
+
+
 /* Event */
 const eventWrap = new EventWrapper();
 soundButton.addEventListener(eventWrap.start, actionPlayPause);

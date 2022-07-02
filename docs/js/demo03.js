@@ -88,4 +88,3 @@ function controlVolume() {
 const eventWrap = new EventWrapper();
 soundButton.addEventListener(eventWrap.start, actionPlayPause);
 sliderRange.addEventListener('input', controlVolume);
-

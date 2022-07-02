@@ -1,5 +1,17 @@
 # 📝 2022/07/02
 
+## DOM 要素をインクルード
+
+関数周りを module に、生成要素は関数でインクルード
+
+```.js
+const createElement = document.createElement;
+```
+
+これの、ショートハンドリングは
+
+一回しか呼び出せないぞ 😡 と怒られた
+
 ## `input` の value
 
 `value` でゴニョゴニョしてたやつ`valueAsNumber` で解決っぽい

@@ -52,4 +52,3 @@ export function setAppendChild(nodes, parentNode = document.body) {
     preNode = node;
   });
 }
-

@@ -1,5 +1,8 @@
 'use strict';
 
+import {EventWrapper} from './EventWrapper.js';
+const eventWrap = new EventWrapper();
+
 /* util funcs */
 function capitalize(str) {
   if (typeof str !== 'string' || !str) return str;
@@ -106,44 +109,8 @@ const { touchBegan, touchMoved, touchEnded } = {
 */
 //console.log(/iPhone|iPad|iPod|Android/.test(navigator.userAgent));
 
-class EventWrapper {
-  
-  constructor() {
-    /*
-    const isMobile = /iPhone|iPad|iPod|Android/.test(navigator.userAgent);
-    this._click = isMobile ? 'click':'click';
-    this._start = isMobile ? 'touchstart':'mousedown';
-    this._move = isMobile ? 'touchmove':'mousemove';
-    this._end = isMobile ? 'touchend':'mouseup';
-    */
-    //this._click = '';
-    //this._start = '';
-    //this._move = '';
-    //this._end = '';
-    
-    [this._click, this._start, this._move, this._end] =
-      /iPhone|iPad|iPod|Android/.test(navigator.userAgent)
-        ? ['click', 'touchstart', 'touchmove', 'touchend']
-        : ['click', 'mousedown', 'mousemove', 'mouseup'];
-  }
 
-  get click() {
-    return this._click;
-  }
 
-  get start() {
-    return this._start;
-  }
-  get move() {
-    return this._move;
-  }
-
-  get end() {
-    return this._end;
-  }
-}
-
-const eventWrap = new EventWrapper();
 
 
 /* audio */

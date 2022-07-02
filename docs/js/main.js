@@ -1,6 +1,10 @@
 import { EventWrapper } from './EventWrapper.js';
+import { parseValueNum, createButton, createInputRange, setAppendChild } from './customDOMfuncs.js';
+
+
 
 /* util funcs */
+/*
 function capitalize(str) {
   if (typeof str !== 'string' || !str) return str;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -17,9 +21,11 @@ function parseValueNum({ value, step, numtype = 'float' }) {
   return numtype === 'int'
     ? Number.parseInt(value)
     : Number.parseFloat(value).toFixed(getDecimalPointDigits(step));
-}
+}*/
 
 /* create document node element funcs */
+
+/*
 function createButton(idName, textContent = null) {
   const element = document.createElement('button');
   element.style.width = '100%';
@@ -53,7 +59,7 @@ function setAppendChild(nodes, parentNode = document.body) {
       : parentNode.appendChild(node);
     preNode = node;
   });
-}
+}*/
 
 /* setup document node element */
 const mainTitleHeader = document.createElement('h1');

@@ -67,7 +67,8 @@ const soundButton = createButton('sound', labelValues[0]);
 
 const sliderWrap = document.createElement('div');
 sliderWrap.style.width = '100%';
-const captionSlider = document.createTextNode('volume: ');
+const captionSlider = document.createTextNode('Volume: ');
+const sliderValue = document.createElement('span');
 
 const sliderDiv = document.createElement('div');
 sliderDiv.style.width = '88%';
@@ -78,12 +79,9 @@ const sliderRange = createInputRange({
   min: 0.0,
   max: 1.0,
   step: 0.05,
-  value: 1.0,
+  value: 0.5,
   numtype: 'float',
 });
-
-const sliderValue = document.createElement('span');
-sliderValue.textContent = parseValueNum(sliderRange);
 
 setAppendChild([
   mainTitleHeader,
@@ -111,6 +109,9 @@ const context = new AudioContext();
 //const oscillator = context.createOscillator();
 let oscillator;
 const gain = context.createGain();
+// Set volume
+gain.gain.value = sliderRange.valueAsNumber;
+sliderValue.textContent = parseValueNum(sliderRange);
 
 function tapAction() {
   // xxx: [0, 1] の繰り返しなので、ビット排他的理論和処理。無駄に
@@ -124,14 +125,18 @@ function tapAction() {
   } else {
     oscillator.stop(0);
   }
-
   this.textContent = labelValues[isPlayFlag];
 }
 
-gain.connect(context.destination);
-gain.gain.value = 0.5; // Set volume at 0.5
+function controlVolume() {
+  // xxx: GLOBAL 定義する？
+  const min = gain.gain.minValue || 0;
+  const max = gain.gain.maxValue || 1;
+  if (this.valueAsNumber >= min && this.valueAsNumber <= max) {
+    gain.gain.value = this.valueAsNumber;
+    sliderValue.textContent = parseValueNum(this);
+  }
+}
 
 soundButton.addEventListener(touchBegan, tapAction);
-sliderRange.addEventListener('input', () => {
-  sliderValue.textContent = parseValueNum(sliderRange);
-});
+sliderRange.addEventListener('input', controlVolume);

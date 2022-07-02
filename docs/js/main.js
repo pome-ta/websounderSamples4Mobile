@@ -6,17 +6,17 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-function getDecimalPointLength(valueStr) {
+function getDecimalPointDigits(valueStr) {
   const numbers = valueStr.split('.');
   const pointLen = numbers[1] ? numbers[1].length : 0;
   // xxx: 0 で、返したものを1 で返してる
   return pointLen ? pointLen : 1;
 }
 
-function parseNum(value, numtype = 'float') {
+function parseValueNum({ value, numtype = 'float' }) {
   return numtype === 'int'
     ? Number.parseInt(value)
-    : Number.parseFloat(value).toFixed(getDecimalPointLength(value));
+    : Number.parseFloat(value).toFixed(getDecimalPointDigits(value));
 }
 
 /* create document node element funcs */
@@ -41,6 +41,7 @@ function createInputRange({ id, min, max, value, numtype, step = 1 }) {
   element.numtype = numtype;
   element.style.width = '100%';
   element.style.height = '2rem';
+  element.style.margin = 0;
   return element;
 }
 
@@ -52,12 +53,6 @@ function setAppendChild(nodes, parentNode = document.body) {
       : parentNode.appendChild(node);
     preNode = node;
   });
-}
-
-function tapAction() {
-  // xxx: [0, 1] の繰り返しなので、ビット排他的理論和処理。無駄に
-  const xor = labelValues.indexOf(this.textContent) ^ 1;
-  this.textContent = labelValues[xor];
 }
 
 /* setup document node element */
@@ -73,8 +68,10 @@ const soundButton = createButton('sound', labelValues[0]);
 const sliderWrap = document.createElement('div');
 sliderWrap.style.width = '100%';
 const captionSlider = document.createTextNode('volume: ');
-const sliderValue = document.createElement('span');
-sliderValue.textContent = '0.0';
+
+const sliderDiv = document.createElement('div');
+sliderDiv.style.width = '88%';
+sliderDiv.style.margin = 'auto';
 
 const sliderRange = createInputRange({
   id: 'range-volume',
@@ -85,13 +82,17 @@ const sliderRange = createInputRange({
   numtype: 'float',
 });
 
+const sliderValue = document.createElement('span');
+sliderValue.textContent = parseValueNum(sliderRange);
+
 setAppendChild([
   mainTitleHeader,
   buttonWrap,
   [captionPlayPause, soundButton],
   sliderWrap,
   [captionSlider, sliderValue],
-  sliderRange,
+  sliderDiv,
+  [sliderRange],
 ]);
 
 // todo: MouseEvent TouchEvent wrapper
@@ -104,13 +105,33 @@ const { touchBegan, touchMoved, touchEnded } = {
     typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup',
 };
 
-soundButton.addEventListener(touchBegan, tapAction);
 /* audio */
 // xxx: prefix は無し
 const context = new AudioContext();
+//const oscillator = context.createOscillator();
+let oscillator;
 const gain = context.createGain();
-const oscillator = context.createOscillator();
 
-oscillator.connect(gain);
+function tapAction() {
+  // xxx: [0, 1] の繰り返しなので、ビット排他的理論和処理。無駄に
+  const isPlayFlag = labelValues.indexOf(this.textContent) ^ 1;
+
+  if (isPlayFlag) {
+    oscillator = context.createOscillator();
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(0);
+  } else {
+    oscillator.stop(0);
+  }
+
+  this.textContent = labelValues[isPlayFlag];
+}
+
 gain.connect(context.destination);
 gain.gain.value = 0.5; // Set volume at 0.5
+
+soundButton.addEventListener(touchBegan, tapAction);
+sliderRange.addEventListener('input', () => {
+  sliderValue.textContent = parseValueNum(sliderRange);
+});

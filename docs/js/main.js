@@ -93,6 +93,7 @@ setAppendChild([
   [sliderRange],
 ]);
 
+/*
 // todo: MouseEvent TouchEvent wrapper
 const { touchBegan, touchMoved, touchEnded } = {
   touchBegan:
@@ -102,6 +103,34 @@ const { touchBegan, touchMoved, touchEnded } = {
   touchEnded:
     typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup',
 };
+*/
+function EventWrapper(){
+}
+ 
+(function(){
+    let click = '';
+    let start = '';
+    let move  = '';
+    let end   = '';
+ 
+    // Touch Panel ?
+    if (/iPhone|iPad|iPod|Android/.test(navigator.userAgent)) {
+        click = 'click';
+        start = 'touchstart';
+        move  = 'touchmove';
+        end   = 'touchend';
+    } else {
+        click = 'click';
+        start = 'mousedown';
+        move  = 'mousemove';
+        end   = 'mouseup';
+    }
+ 
+    EventWrapper.CLICK = click;
+    EventWrapper.START = start;
+    EventWrapper.MOVE  = move;
+    EventWrapper.END   = end;
+})();
 
 /* audio */
 // xxx: prefix は無し
@@ -138,5 +167,6 @@ function controlVolume() {
   }
 }
 
-soundButton.addEventListener(touchBegan, tapAction);
+soundButton.addEventListener(EventWrapper.START, tapAction);
 sliderRange.addEventListener('input', controlVolume);
+

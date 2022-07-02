@@ -96,17 +96,14 @@ setAppendChild([
 /* audio */
 // xxx: prefix は無し
 const context = new AudioContext();
-//const oscillator = context.createOscillator();
 let oscillator;
 const gain = context.createGain();
-
-gain.gain.value = sliderRange.valueAsNumber;  // Set volume
+gain.gain.value = sliderRange.valueAsNumber; // Set volume
 sliderValue.textContent = parseValueNum(sliderRange);
 
-function tapAction() {
+function actionPlayPause() {
   // xxx: [0, 1] の繰り返しなので、ビット排他的理論和処理。無駄に
   const isPlayFlag = labelValues.indexOf(this.textContent) ^ 1;
-
   if (isPlayFlag) {
     oscillator = context.createOscillator();
     oscillator.connect(gain);
@@ -119,7 +116,7 @@ function tapAction() {
 }
 
 function controlVolume() {
-  // xxx: GLOBAL 定義する？
+  // xxx: GLOBAL 定義でもいい？
   const min = gain.gain.minValue || 0;
   const max = gain.gain.maxValue || 1;
   if (this.valueAsNumber >= min && this.valueAsNumber <= max) {
@@ -130,6 +127,5 @@ function controlVolume() {
 
 /* Event */
 const eventWrap = new EventWrapper();
-soundButton.addEventListener(eventWrap.start, tapAction);
+soundButton.addEventListener(eventWrap.start, actionPlayPause);
 sliderRange.addEventListener('input', controlVolume);
-

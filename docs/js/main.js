@@ -104,33 +104,47 @@ const { touchBegan, touchMoved, touchEnded } = {
     typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup',
 };
 */
-function EventWrapper(){
+//console.log(/iPhone|iPad|iPod|Android/.test(navigator.userAgent));
+
+class EventWrapper {
+  
+  constructor() {
+    /*
+    const isMobile = /iPhone|iPad|iPod|Android/.test(navigator.userAgent);
+    this._click = isMobile ? 'click':'click';
+    this._start = isMobile ? 'touchstart':'mousedown';
+    this._move = isMobile ? 'touchmove':'mousemove';
+    this._end = isMobile ? 'touchend':'mouseup';
+    */
+    //this._click = '';
+    //this._start = '';
+    //this._move = '';
+    //this._end = '';
+    
+    [this._click, this._start, this._move, this._end] =
+      /iPhone|iPad|iPod|Android/.test(navigator.userAgent)
+        ? ['click', 'touchstart', 'touchmove', 'touchend']
+        : ['click', 'mousedown', 'mousemove', 'mouseup'];
+  }
+
+  get click() {
+    return this._click;
+  }
+
+  get start() {
+    return this._start;
+  }
+  get move() {
+    return this._move;
+  }
+
+  get end() {
+    return this._end;
+  }
 }
- 
-(function(){
-    let click = '';
-    let start = '';
-    let move  = '';
-    let end   = '';
- 
-    // Touch Panel ?
-    if (/iPhone|iPad|iPod|Android/.test(navigator.userAgent)) {
-        click = 'click';
-        start = 'touchstart';
-        move  = 'touchmove';
-        end   = 'touchend';
-    } else {
-        click = 'click';
-        start = 'mousedown';
-        move  = 'mousemove';
-        end   = 'mouseup';
-    }
- 
-    EventWrapper.CLICK = click;
-    EventWrapper.START = start;
-    EventWrapper.MOVE  = move;
-    EventWrapper.END   = end;
-})();
+
+const eventWrap = new EventWrapper();
+
 
 /* audio */
 // xxx: prefix は無し
@@ -167,6 +181,5 @@ function controlVolume() {
   }
 }
 
-soundButton.addEventListener(EventWrapper.START, tapAction);
+soundButton.addEventListener(eventWrap.start, tapAction);
 sliderRange.addEventListener('input', controlVolume);
-

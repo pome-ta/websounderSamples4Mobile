@@ -11,7 +11,7 @@ export class EventWrapper {
     //this._start = '';
     //this._move = '';
     //this._end = '';
-    
+
     [this._click, this._start, this._move, this._end] =
       /iPhone|iPad|iPod|Android/.test(navigator.userAgent)
         ? ['click', 'touchstart', 'touchmove', 'touchend']
@@ -25,6 +25,7 @@ export class EventWrapper {
   get start() {
     return this._start;
   }
+
   get move() {
     return this._move;
   }
@@ -33,4 +34,3 @@ export class EventWrapper {
     return this._end;
   }
 }
-

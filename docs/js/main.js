@@ -1,7 +1,4 @@
-'use strict';
-
-import {EventWrapper} from './EventWrapper.js';
-const eventWrap = new EventWrapper();
+import { EventWrapper } from './EventWrapper.js';
 
 /* util funcs */
 function capitalize(str) {
@@ -16,10 +13,10 @@ function getDecimalPointDigits(valueStr) {
   return pointLen ? pointLen : 1;
 }
 
-function parseValueNum({ value, numtype = 'float' }) {
+function parseValueNum({ value, step, numtype = 'float' }) {
   return numtype === 'int'
     ? Number.parseInt(value)
-    : Number.parseFloat(value).toFixed(getDecimalPointDigits(value));
+    : Number.parseFloat(value).toFixed(getDecimalPointDigits(step));
 }
 
 /* create document node element funcs */
@@ -96,31 +93,14 @@ setAppendChild([
   [sliderRange],
 ]);
 
-/*
-// todo: MouseEvent TouchEvent wrapper
-const { touchBegan, touchMoved, touchEnded } = {
-  touchBegan:
-    typeof document.ontouchstart !== 'undefined' ? 'touchstart' : 'mousedown',
-  touchMoved:
-    typeof document.ontouchmove !== 'undefined' ? 'touchmove' : 'mousemove',
-  touchEnded:
-    typeof document.ontouchend !== 'undefined' ? 'touchend' : 'mouseup',
-};
-*/
-//console.log(/iPhone|iPad|iPod|Android/.test(navigator.userAgent));
-
-
-
-
-
 /* audio */
 // xxx: prefix は無し
 const context = new AudioContext();
 //const oscillator = context.createOscillator();
 let oscillator;
 const gain = context.createGain();
-// Set volume
-gain.gain.value = sliderRange.valueAsNumber;
+
+gain.gain.value = sliderRange.valueAsNumber;  // Set volume
 sliderValue.textContent = parseValueNum(sliderRange);
 
 function tapAction() {
@@ -148,5 +128,8 @@ function controlVolume() {
   }
 }
 
+/* Event */
+const eventWrap = new EventWrapper();
 soundButton.addEventListener(eventWrap.start, tapAction);
 sliderRange.addEventListener('input', controlVolume);
+

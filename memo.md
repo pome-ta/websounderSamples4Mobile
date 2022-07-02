@@ -1,11 +1,14 @@
 # 📝 2022/07/02
 
+## `input` の value
 
 `value` でゴニョゴニョしてたやつ`valueAsNumber` で解決っぽい
 
-
 なんなら、`step` の桁数に合わせたい？
 
+## `EventWrapper.js`
+
+サンプルは、即時関数でどうにかしてたけど class 化してみた
 
 # 📝 2022/07/01
 

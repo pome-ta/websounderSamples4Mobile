@@ -19,6 +19,12 @@ const setupDOM = () => {
   mainTitleHeader.textContent =
     'AudioBufferSourceNode | オーディオデータの再生';
   mainTitleHeader.style.fontSize = '1rem';
+  
+  // controller
+  const controlView = document.createElement('article');
+  controlView.style.width = '92%';
+  controlView.style.margin = 'auto';
+  
 
   // SELECT AUDIO FILE
   const selectAudioSection = document.createElement('section');
@@ -95,10 +101,12 @@ const setupDOM = () => {
   // overall setup
   setAppendChild([
     mainTitleHeader,
+    controlView,[
     selectAudioSection,
     volumeRangeSection,
     playbackRateSection,
     loopToggleSection,
+    ]
   ]);
 };
 

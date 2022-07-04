@@ -14,11 +14,13 @@ const labelValues = ['Play', 'Pause'];
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent = 'AudioBufferSourceNode | オーディオデータの再生';
+  mainTitleHeader.style.fontSize = '1rem';
+  
   
   // SELECT AUDIO FILE
   const selectAudioSection = document.createElement('section');
   selectAudioSection.style.width = '100%';
-  const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE :');
+  const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE : ');
   const selectAudioName = document.createElement('span');
   
   setAppendChild([selectAudioCaption, selectAudioName], selectAudioSection);
@@ -41,8 +43,25 @@ const setupDOM = () => {
     numtype: 'float',
   });
   
-  setAppendChild([volumeRangeCaption, volumeRangeValue, volumeRangeWrap,[volumeRange]], volumeRangeSection)
+  setAppendChild([volumeRangeCaption, volumeRangeValue, volumeRangeWrap,[volumeRange]], volumeRangeSection);
   
+  // PLAYBACK RATE
+  const playbackRateSection = document.createElement('section');
+  playbackRateSection.style.width = '100%';
+  const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
+  const playbackRateValue = document.createElement('span');
+  
+  const rateRangeWrap = document.createElement('div');
+  rateRangeWrap.style.width = '88%';
+  rateRangeWrap.style.margin = 'auto';
+  const rateRange = createInputRange({
+    id: 'range-playback-rate',
+    min: 0.0,
+    max: 1.0,
+    step: 0.05,
+    value: 0.5,
+    numtype: 'float',
+  });
   
   
   

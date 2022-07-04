@@ -51,6 +51,7 @@ export function createCheckbox({ id, checked = false }) {
   element.style.cursor = 'pointer';
   element.style.width = '1rem';
   element.style.height = '1rem';
+  /*element.style.padding = '0 1rem';*/
   return element;
 }
 

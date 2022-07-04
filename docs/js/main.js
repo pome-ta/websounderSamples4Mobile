@@ -19,12 +19,11 @@ const setupDOM = () => {
   mainTitleHeader.textContent =
     'AudioBufferSourceNode | オーディオデータの再生';
   mainTitleHeader.style.fontSize = '1rem';
-  
+
   // controller
   const controlView = document.createElement('article');
   controlView.style.width = '92%';
   controlView.style.margin = 'auto';
-  
 
   // SELECT AUDIO FILE
   const selectAudioSection = document.createElement('section');
@@ -43,7 +42,7 @@ const setupDOM = () => {
   const volumeRangeWrap = document.createElement('div');
   volumeRangeWrap.style.width = '88%';
   volumeRangeWrap.style.margin = 'auto';
-  
+
   volumeRange = createInputRange({
     id: 'range-volume',
     min: 0.0,
@@ -67,7 +66,7 @@ const setupDOM = () => {
   const rateRangeWrap = document.createElement('div');
   rateRangeWrap.style.width = '88%';
   rateRangeWrap.style.margin = 'auto';
-  
+
   rateRange = createInputRange({
     id: 'range-playback-rate',
     min: 0.05,
@@ -96,29 +95,35 @@ const setupDOM = () => {
   loopToggleLabel.htmlFor = loopToggleBox.id;
   loopToggleLabel.style.cursor = 'pointer';
   //loopToggleLabel.insertAdjacentElement('afterbegin', loopToggleBox);
-  
-  
 
   //setAppendChild([loopToggleLabel], loopToggleSection);
-  setAppendChild([loopToggleLabel,[loopToggleBox, loopToggleCaption]], loopToggleSection);
+  setAppendChild(
+    [loopToggleLabel, [loopToggleBox, loopToggleCaption]],
+    loopToggleSection
+  );
 
   // overall setup
   setAppendChild([
     mainTitleHeader,
-    controlView,[
-    selectAudioSection,
-    volumeRangeSection,
-    playbackRateSection,
-    loopToggleSection,
-    ]
+    controlView,
+    [
+      selectAudioSection,
+      volumeRangeSection,
+      playbackRateSection,
+      loopToggleSection,
+    ],
   ]);
 };
 
 setupDOM();
 
 /* audio */
+const soundPath = './sounds/loop.wav';
 // xxx: prefix は無し
 const context = new AudioContext();
+let source = null;
+const gain = context.createGain();
+
 
 async function LoadSample(actx, url) {
   const res = await fetch(url);
@@ -126,5 +131,15 @@ async function LoadSample(actx, url) {
   return actx.decodeAudioData(arraybuf);
 }
 
-/* Event */
+/* Events */
 const eventWrap = new EventWrapper();
+
+document.addEventListener('DOMContentLoaded', async () => {
+  source = context.createBufferSource();
+  const audioBuffer = await LoadSample(context, soundPath);
+  source.buffer = audioBuffer;
+});
+
+
+// Toggle loop
+//loopToggleBox.addEventListener(eventWrap.CLICK, )

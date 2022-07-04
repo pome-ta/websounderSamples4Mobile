@@ -1,7 +1,14 @@
 # 📝 2022/07/04
 
+## `setAppendChild` 手順
 
+以前は、一括で`append` していたが、要素毎に`append` して、最後に塊を`append` する
 
+## `h0` 系の font size
+
+なんか、うまくかわらない？
+
+`style.fontSize` だと変わらなかった
 
 # 📝 2022/07/02
 

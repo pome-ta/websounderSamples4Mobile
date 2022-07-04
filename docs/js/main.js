@@ -9,8 +9,10 @@ import {
 import { EventWrapper } from './EventWrapper.js';
 
 /* setup document node element */
-let sliderValue, sliderRange, soundButton;
-const labelValues = ['Play', 'Pause'];
+let selectAudioName;
+let volumeRangeValue, volumeRange;
+let playbackRateValue, rateRange;
+let loopToggleBox;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -22,7 +24,7 @@ const setupDOM = () => {
   const selectAudioSection = document.createElement('section');
   selectAudioSection.style.width = '100%';
   const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE : ');
-  const selectAudioName = document.createElement('span');
+  selectAudioName = document.createElement('span');
 
   setAppendChild([selectAudioCaption, selectAudioName], selectAudioSection);
 
@@ -30,12 +32,13 @@ const setupDOM = () => {
   const volumeRangeSection = document.createElement('section');
   volumeRangeSection.style.width = '100%';
   const volumeRangeCaption = document.createTextNode('VOLUME : ');
-  const volumeRangeValue = document.createElement('span');
+  volumeRangeValue = document.createElement('span');
 
   const volumeRangeWrap = document.createElement('div');
   volumeRangeWrap.style.width = '88%';
   volumeRangeWrap.style.margin = 'auto';
-  const volumeRange = createInputRange({
+  
+  volumeRange = createInputRange({
     id: 'range-volume',
     min: 0.0,
     max: 1.0,
@@ -53,12 +56,13 @@ const setupDOM = () => {
   const playbackRateSection = document.createElement('section');
   playbackRateSection.style.width = '100%';
   const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
-  const playbackRateValue = document.createElement('span');
+  playbackRateValue = document.createElement('span');
 
   const rateRangeWrap = document.createElement('div');
   rateRangeWrap.style.width = '88%';
   rateRangeWrap.style.margin = 'auto';
-  const rateRange = createInputRange({
+  
+  rateRange = createInputRange({
     id: 'range-playback-rate',
     min: 0.05,
     max: 2.0,
@@ -76,7 +80,7 @@ const setupDOM = () => {
   const loopToggleSection = document.createElement('section');
   loopToggleSection.style.width = '100%';
 
-  const loopToggleBox = createCheckbox({
+  loopToggleBox = createCheckbox({
     id: 'loopToggle',
   });
 

@@ -43,6 +43,16 @@ export function createInputRange({ id, min, max, value, numtype, step = 1 }) {
   return element;
 }
 
+export function createCheckbox({ id, checked = false }) {
+  const element = document.createElement('input');
+  element.type = 'checkbox';
+  element.id = id;
+  element.checked = checked;
+  element.style.width = '1rem';
+  element.style.height = '1rem';
+  return element;
+}
+
 export function setAppendChild(nodes, parentNode = document.body) {
   let preNode = parentNode;
   nodes.forEach((node) => {

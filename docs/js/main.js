@@ -2,6 +2,7 @@ import {
   parseValueNum,
   createButton,
   createInputRange,
+  createCheckbox,
   setAppendChild,
 } from './customDOMfuncs.js';
 
@@ -13,24 +14,24 @@ const labelValues = ['Play', 'Pause'];
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
-  mainTitleHeader.textContent = 'AudioBufferSourceNode | オーディオデータの再生';
+  mainTitleHeader.textContent =
+    'AudioBufferSourceNode | オーディオデータの再生';
   mainTitleHeader.style.fontSize = '1rem';
-  
-  
+
   // SELECT AUDIO FILE
   const selectAudioSection = document.createElement('section');
   selectAudioSection.style.width = '100%';
   const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE : ');
   const selectAudioName = document.createElement('span');
-  
+
   setAppendChild([selectAudioCaption, selectAudioName], selectAudioSection);
-  
+
   // VOLUME
   const volumeRangeSection = document.createElement('section');
   volumeRangeSection.style.width = '100%';
   const volumeRangeCaption = document.createTextNode('VOLUME : ');
   const volumeRangeValue = document.createElement('span');
-  
+
   const volumeRangeWrap = document.createElement('div');
   volumeRangeWrap.style.width = '88%';
   volumeRangeWrap.style.margin = 'auto';
@@ -39,62 +40,56 @@ const setupDOM = () => {
     min: 0.0,
     max: 1.0,
     step: 0.05,
-    value: 0.5,
+    value: 1.0,
     numtype: 'float',
   });
-  
-  setAppendChild([volumeRangeCaption, volumeRangeValue, volumeRangeWrap,[volumeRange]], volumeRangeSection);
-  
+
+  setAppendChild(
+    [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
+    volumeRangeSection
+  );
+
   // PLAYBACK RATE
   const playbackRateSection = document.createElement('section');
   playbackRateSection.style.width = '100%';
   const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
   const playbackRateValue = document.createElement('span');
-  
+
   const rateRangeWrap = document.createElement('div');
   rateRangeWrap.style.width = '88%';
   rateRangeWrap.style.margin = 'auto';
   const rateRange = createInputRange({
     id: 'range-playback-rate',
-    min: 0.0,
-    max: 1.0,
+    min: 0.05,
+    max: 2.0,
     step: 0.05,
-    value: 0.5,
-    numtype: 'float',
-  });
-  
-  
-  
-
-  const buttonWrap = document.createElement('div');
-  buttonWrap.style.width = '100%';
-
-  const captionPlayPause = document.createTextNode(labelValues.join(' / '));
-  soundButton = createButton('sound', labelValues[0]);
-
-  
-
-  const sliderDiv = document.createElement('div');
-  sliderDiv.style.width = '88%';
-  sliderDiv.style.margin = 'auto';
-
-  sliderRange = createInputRange({
-    id: 'range-volume',
-    min: 0.0,
-    max: 1.0,
-    step: 0.05,
-    value: 0.5,
+    value: 1.0,
     numtype: 'float',
   });
 
+  setAppendChild(
+    [playbackRateCaption, playbackRateValue, rateRangeWrap, [rateRange]],
+    playbackRateSection
+  );
+
+  // LOOP
+  const loopToggleSection = document.createElement('section');
+  loopToggleSection.style.width = '100%';
+
+  const loopToggleBox = createCheckbox({
+    id: 'loopToggle',
+  });
+  const loopToggleCaption = document.createTextNode('LOOP');
+
+  setAppendChild([loopToggleBox, loopToggleCaption], loopToggleSection);
+
+  // overall setup
   setAppendChild([
     mainTitleHeader,
-    buttonWrap,
-    [captionPlayPause, soundButton],
     selectAudioSection,
     volumeRangeSection,
-    sliderDiv,
-    [sliderRange],
+    playbackRateSection,
+    loopToggleSection,
   ]);
 };
 
@@ -110,7 +105,5 @@ async function LoadSample(actx, url) {
   return actx.decodeAudioData(arraybuf);
 }
 
-
 /* Event */
 const eventWrap = new EventWrapper();
-

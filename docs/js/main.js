@@ -79,9 +79,14 @@ const setupDOM = () => {
   const loopToggleBox = createCheckbox({
     id: 'loopToggle',
   });
-  const loopToggleCaption = document.createTextNode('LOOP');
 
-  setAppendChild([loopToggleBox, loopToggleCaption], loopToggleSection);
+  const loopToggleLabel = document.createElement('label');
+  loopToggleLabel.textContent = 'LOOP';
+  loopToggleLabel.htmlFor = loopToggleBox.id;
+  loopToggleLabel.style.cursor = 'pointer';
+  loopToggleLabel.insertAdjacentElement('afterbegin', loopToggleBox);
+
+  setAppendChild([loopToggleLabel], loopToggleSection);
 
   // overall setup
   setAppendChild([

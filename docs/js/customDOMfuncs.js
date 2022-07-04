@@ -48,6 +48,7 @@ export function createCheckbox({ id, checked = false }) {
   element.type = 'checkbox';
   element.id = id;
   element.checked = checked;
+  element.style.cursor = 'pointer';
   element.style.width = '1rem';
   element.style.height = '1rem';
   return element;

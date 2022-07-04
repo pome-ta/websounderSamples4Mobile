@@ -3,6 +3,7 @@ import {
   createButton,
   createInputRange,
   createCheckbox,
+  createSection,
   setAppendChild,
 } from './customDOMfuncs.js';
 
@@ -26,16 +27,18 @@ const setupDOM = () => {
   controlView.style.margin = 'auto';
 
   // SELECT AUDIO FILE
-  const selectAudioSection = document.createElement('section');
-  selectAudioSection.style.width = '100%';
+  //const selectAudioSection = createSection();
   const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE : ');
   selectAudioName = document.createElement('span');
 
-  setAppendChild([selectAudioCaption, selectAudioName], selectAudioSection);
+  //setAppendChild([selectAudioCaption, selectAudioName], selectAudioSection);
+  const selectAudioSection = setAppendChild(
+    [selectAudioCaption, selectAudioName],
+    createSection()
+  );
 
   // VOLUME
-  const volumeRangeSection = document.createElement('section');
-  volumeRangeSection.style.width = '100%';
+  //const volumeRangeSection = createSection();
   const volumeRangeCaption = document.createTextNode('VOLUME : ');
   volumeRangeValue = document.createElement('span');
 
@@ -52,14 +55,17 @@ const setupDOM = () => {
     numtype: 'float',
   });
 
-  setAppendChild(
+  /*setAppendChild(
     [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
     volumeRangeSection
+  );*/
+  const volumeRangeSection = setAppendChild(
+    [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
+    createSection()
   );
 
   // PLAYBACK RATE
-  const playbackRateSection = document.createElement('section');
-  playbackRateSection.style.width = '100%';
+  const playbackRateSection = createSection();
   const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
   playbackRateValue = document.createElement('span');
 
@@ -84,7 +90,7 @@ const setupDOM = () => {
   // LOOP
   const loopToggleSection = document.createElement('section');
   loopToggleSection.style.width = '100%';
-  const loopToggleCaption = document.createTextNode('LOOP');
+  const loopToggleCaption = document.createTextNode(' LOOP');
 
   loopToggleBox = createCheckbox({
     id: 'loopToggle',
@@ -124,7 +130,6 @@ const context = new AudioContext();
 let source = null;
 const gain = context.createGain();
 
-
 async function LoadSample(actx, url) {
   const res = await fetch(url);
   const arraybuf = await res.arrayBuffer();
@@ -139,7 +144,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const audioBuffer = await LoadSample(context, soundPath);
   source.buffer = audioBuffer;
 });
-
 
 // Toggle loop
 //loopToggleBox.addEventListener(eventWrap.CLICK, )

@@ -55,6 +55,12 @@ export function createCheckbox({ id, checked = false }) {
   return element;
 }
 
+export function createSection() {
+  const element = document.createElement('section');
+  element.style.width = '100%';
+  return element;
+}
+
 export function setAppendChild(nodes, parentNode = document.body) {
   let preNode = parentNode;
   nodes.forEach((node) => {
@@ -63,4 +69,5 @@ export function setAppendChild(nodes, parentNode = document.body) {
       : parentNode.appendChild(node);
     preNode = node;
   });
+  return parentNode;
 }

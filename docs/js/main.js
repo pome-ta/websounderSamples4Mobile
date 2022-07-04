@@ -65,7 +65,7 @@ const setupDOM = () => {
   );
 
   // PLAYBACK RATE
-  const playbackRateSection = createSection();
+  //const playbackRateSection = createSection();
   const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
   playbackRateValue = document.createElement('span');
 
@@ -82,14 +82,14 @@ const setupDOM = () => {
     numtype: 'float',
   });
 
-  setAppendChild(
+  const playbackRateSection = setAppendChild(
     [playbackRateCaption, playbackRateValue, rateRangeWrap, [rateRange]],
-    playbackRateSection
+    createSection()
   );
 
   // LOOP
-  const loopToggleSection = document.createElement('section');
-  loopToggleSection.style.width = '100%';
+  //const loopToggleSection = document.createElement('section');
+  //loopToggleSection.style.width = '100%';
   const loopToggleCaption = document.createTextNode(' LOOP');
 
   loopToggleBox = createCheckbox({
@@ -103,9 +103,10 @@ const setupDOM = () => {
   //loopToggleLabel.insertAdjacentElement('afterbegin', loopToggleBox);
 
   //setAppendChild([loopToggleLabel], loopToggleSection);
-  setAppendChild(
+  
+  const loopToggleSection = setAppendChild(
     [loopToggleLabel, [loopToggleBox, loopToggleCaption]],
-    loopToggleSection
+    createSection()
   );
 
   // overall setup

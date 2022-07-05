@@ -148,7 +148,7 @@ function _startAudio(arrayBuffer) {
 
   // AudioBufferSourceNode (Input) -> GainNode (Volume) -> AudioDestinationNode (Output)
   //console.log(source);
-/*
+  /*
   context.decodeAudioData(arrayBuffer).then(function (decodedData) {
     // デコードしたデータをここで使う
     //console.log(decodedData);
@@ -156,9 +156,9 @@ function _startAudio(arrayBuffer) {
   });*/
   //console.log(rateRange.valueAsNumber);
   //loopToggleBox.checked
-context.decodeAudioData(arrayBuffer, function (decodedData) {
-  source.buffer = decodedData;
-});
+  context.decodeAudioData(arrayBuffer, function (decodedData) {
+    source.buffer = decodedData;
+  });
   source.connect(gain);
   gain.connect(context.destination);
 
@@ -167,7 +167,7 @@ context.decodeAudioData(arrayBuffer, function (decodedData) {
   //context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
 }
 
-const startAudio = function(arrayBuffer) {
+const startAudio = function (arrayBuffer) {
   source = context.createBufferSource();
   context.decodeAudioData(arrayBuffer, function (decodedData) {
     source.buffer = decodedData;
@@ -177,7 +177,6 @@ const startAudio = function(arrayBuffer) {
 
   // Start audio
   source.start(0);
-  
 };
 
 async function eventTargetFile(uri) {

@@ -10,10 +10,11 @@ import {
 import { EventWrapper } from './EventWrapper.js';
 
 /* setup document node element */
-let selectAudioName;
+let selectAudioName, fileUploadAudioButton;
 let volumeRangeValue, volumeRange;
 let playbackRateValue, rateRange;
 let loopToggleBox;
+let stopAudioButton;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -27,19 +28,20 @@ const setupDOM = () => {
   controlView.style.margin = 'auto';
 
   // SELECT AUDIO FILE
-  //const selectAudioSection = createSection();
   const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE : ');
+
   selectAudioName = document.createElement('span');
 
-  //setAppendChild([selectAudioCaption, selectAudioName], selectAudioSection);
+  fileUploadAudioButton = createButton('file-upload-audio', 'Upload');
+
   const selectAudioSection = setAppendChild(
-    [selectAudioCaption, selectAudioName],
+    [selectAudioCaption, selectAudioName, fileUploadAudioButton],
     createSection()
   );
 
   // VOLUME
-  //const volumeRangeSection = createSection();
   const volumeRangeCaption = document.createTextNode('VOLUME : ');
+
   volumeRangeValue = document.createElement('span');
 
   const volumeRangeWrap = document.createElement('div');
@@ -55,18 +57,14 @@ const setupDOM = () => {
     numtype: 'float',
   });
 
-  /*setAppendChild(
-    [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
-    volumeRangeSection
-  );*/
   const volumeRangeSection = setAppendChild(
     [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
     createSection()
   );
 
   // PLAYBACK RATE
-  //const playbackRateSection = createSection();
   const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
+
   playbackRateValue = document.createElement('span');
 
   const rateRangeWrap = document.createElement('div');
@@ -88,8 +86,6 @@ const setupDOM = () => {
   );
 
   // LOOP
-  //const loopToggleSection = document.createElement('section');
-  //loopToggleSection.style.width = '100%';
   const loopToggleCaption = document.createTextNode(' LOOP');
 
   loopToggleBox = createCheckbox({
@@ -97,19 +93,21 @@ const setupDOM = () => {
   });
 
   const loopToggleLabel = document.createElement('label');
-  //loopToggleLabel.textContent = 'LOOP';
   loopToggleLabel.htmlFor = loopToggleBox.id;
   loopToggleLabel.style.cursor = 'pointer';
-  //loopToggleLabel.insertAdjacentElement('afterbegin', loopToggleBox);
-
-  //setAppendChild([loopToggleLabel], loopToggleSection);
 
   const loopToggleSection = setAppendChild(
     [loopToggleLabel, [loopToggleBox, loopToggleCaption]],
     createSection()
   );
+  
+  const stopButtonWrap = document.createElement('div');
+  stopButtonWrap.style.padding = '2rem';
+  stopButtonWrap.style.margin = 'auto';
+  
+  stopAudioButton = createButton('stop', '🤚 Stop Audio');
 
-  // overall setup
+  // overall DOM setup
   setAppendChild([
     mainTitleHeader,
     controlView,
@@ -118,6 +116,8 @@ const setupDOM = () => {
       volumeRangeSection,
       playbackRateSection,
       loopToggleSection,
+      stopButtonWrap,
+      [stopAudioButton]
     ],
   ]);
 };
@@ -126,25 +126,79 @@ setupDOM();
 
 /* audio */
 const soundPath = './sounds/loop.wav';
-// xxx: prefix は無し
-const context = new AudioContext();
+const context = new AudioContext(); // xxx: prefix
 let source = null;
 const gain = context.createGain();
 
-async function LoadSample(actx, url) {
-  const res = await fetch(url);
-  const arraybuf = await res.arrayBuffer();
-  return actx.decodeAudioData(arraybuf);
+function startAudio(arrayBuffer) {
+  console.log(arrayBuffer);
+  source = context.createBufferSource();
+  //context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
+  //source.buffer = audioBuffer;
+  source.buffer = context.decodeAudioData(audioBuffer);
+  source.playbackRate.value = rateRange.valueAsNumber;
+  source.loop = loopToggleBox.checked;
+ 
+  // AudioBufferSourceNode (Input) -> GainNode (Volume) -> AudioDestinationNode (Output)
+  source.connect(gain);
+  gain.connect(context.destination);
+ 
+  // Start audio
+  source.start(0);
+  context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
+}
+
+async function eventTargetFile(uri) {
+  const res = await fetch(uri);
+  // xxx: error Handling
+  const data = await res.blob().then((blob) => ({
+    contentType: res.headers.get('Content-Type'),
+    blob: blob,
+  }));
+  // xxx: error Handling
+  return new File([data.blob], uri, { type: data.contentType });
 }
 
 /* Events */
 const eventWrap = new EventWrapper();
 
+fileUploadAudioButton.addEventListener(eventWrap.click, async function (event) {
+  const uploader = this;
+  uploader.disabled = true;
+  uploader.textContent = 'Now Loading...';
+  const progressArea = selectAudioName;
+  const file = await eventTargetFile(soundPath);
+  // xxx: error Handling
+  const reader = new FileReader();
+  reader.onprogress = (event) => {
+    // xxx: `fetch` の時点で、もう取得終えてる？
+    if (event.lengthComputable && event.total > 0) {
+      const rate = Math.floor((event.loaded / event.total) * 100);
+      progressArea.textContent = `${rate} %`;
+    }
+  };
+  // xxx: error Handling
+  // Success read
+  reader.onload = () => {
+    const arrayBuffer = reader.result;
+    startAudio(arrayBuffer);
+    progressArea.textContent = file.name;
+    uploader.textContent = 'Complete !!';
+  };
+  // Read the instance of File
+  reader.readAsArrayBuffer(file);
+});
+
+/*
 document.addEventListener('DOMContentLoaded', async () => {
   source = context.createBufferSource();
   const audioBuffer = await LoadSample(context, soundPath);
   source.buffer = audioBuffer;
 });
-
+*/
 // Toggle loop
-//loopToggleBox.addEventListener(eventWrap.CLICK, )
+loopToggleBox.addEventListener(eventWrap.CLICK, function() {
+  if (source instanceof AudioBufferSourceNode) {
+    source.loop = this.checked;
+  }
+});

@@ -1,3 +1,18 @@
+# 📝 2022/07/05
+
+## `document.createEvent('Event')` 処理
+
+ディスコンになってるので、書き換え予定
+
+``` .js
+var event = document.createEvent('Event');
+event.initEvent('ended', true, true);
+```
+
+先に、読んだ後の処理を書く？
+
+
+
 # 📝 2022/07/04
 
 ## `setAppendChild` 手順

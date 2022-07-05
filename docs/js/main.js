@@ -181,11 +181,57 @@ fileUploadAudioButton.addEventListener(eventWrap.start, async () => {
   reader.readAsArrayBuffer(file);
 });
 
+// Control Volume
+volumeRange.addEventListener('input', function () {
+  const min = gain.gain.minValue || 0;
+  const max = gain.gain.maxValue || 1;
+  const valueAsNumber = this.valueAsNumber;
+  if (valueAsNumber >= min && valueAsNumber <= max) {
+    gain.gain.value = valueAsNumber;
+    volumeRangeValue.textContent = parseValueNum(this);
+  }
+});
+
+// Control playbackRate
+rateRange.addEventListener('input', function () {
+  if (source instanceof AudioBufferSourceNode) {
+    const min = source.playbackRate.minValue || 0;
+    const max = source.playbackRate.maxValue || 1024;
+    const valueAsNumber = this.valueAsNumber;
+
+    if (valueAsNumber >= min && valueAsNumber <= max) {
+      source.playbackRate.value = valueAsNumber;
+    }
+  }
+  playbackRateValue.textContent = parseValueNum(this);
+});
+
 // Toggle loop
 loopToggleBox.addEventListener(eventWrap.click, function () {
   if (source instanceof AudioBufferSourceNode) {
     source.loop = this.checked;
   }
+});
+
+stopAudioButton.addEventListener(eventWrap.click, function () {
+  if (source instanceof AudioBufferSourceNode) {
+    const uploader = fileUploadAudioButton;
+    uploader.disabled = false;
+    uploader.textContent = 'Upload';
+
+    const progressArea = selectAudioName;
+    progressArea.textContent = '';
+
+    source.onended = null;
+    source.stop(0);
+  }
+});
+
+// setup
+document.addEventListener('DOMContentLoaded', () => {
+  // xxx: 初期化、再生時に難あり
+  volumeRangeValue.textContent = parseValueNum(volumeRange);
+  playbackRateValue.textContent = parseValueNum(rateRange);
 });
 
 // todo: wake up AudioContext

@@ -100,11 +100,11 @@ const setupDOM = () => {
     [loopToggleLabel, [loopToggleBox, loopToggleCaption]],
     createSection()
   );
-  
+
   const stopButtonWrap = document.createElement('div');
   stopButtonWrap.style.padding = '2rem';
   stopButtonWrap.style.margin = 'auto';
-  
+
   stopAudioButton = createButton('stop', '🤚 Stop Audio');
 
   // overall DOM setup
@@ -117,7 +117,7 @@ const setupDOM = () => {
       playbackRateSection,
       loopToggleSection,
       stopButtonWrap,
-      [stopAudioButton]
+      [stopAudioButton],
     ],
   ]);
 };
@@ -130,42 +130,55 @@ const context = new AudioContext(); // xxx: prefix
 let source = null;
 const gain = context.createGain();
 
-function startAudio(arrayBuffer) {
+function _startAudio(arrayBuffer) {
   source = context.createBufferSource();
   /*const audioBuffer = context.decodeAudioData(arrayBuffer).then((decodedData) => {
     //console.log(decodedData);
     return decodedData;
   });*/
-  
+
   //decodeAudioData
   //const audioBuffer = await LoadBuffer(context, )
-  
-  
+
   //context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
   //source.buffer = audioBuffer;
   //source.buffer = audioBuffer;
   //source.playbackRate.value = rateRange.valueAsNumber;
   //source.loop = loopToggleBox.checked;
- 
+
   // AudioBufferSourceNode (Input) -> GainNode (Volume) -> AudioDestinationNode (Output)
   //console.log(source);
-  
-  context.decodeAudioData(arrayBuffer).then(function(decodedData) {
+/*
+  context.decodeAudioData(arrayBuffer).then(function (decodedData) {
     // デコードしたデータをここで使う
-    console.log(decodedData);
+    //console.log(decodedData);
     source.buffer = decodedData;
-    
+  });*/
+  //console.log(rateRange.valueAsNumber);
+  //loopToggleBox.checked
+context.decodeAudioData(arrayBuffer, function (decodedData) {
+  source.buffer = decodedData;
 });
-console.log(loopToggleBox.checked);
-//loopToggleBox.checked
-  
   source.connect(gain);
   gain.connect(context.destination);
- 
+
   // Start audio
   source.start(0);
   //context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
 }
+
+const startAudio = function(arrayBuffer) {
+  source = context.createBufferSource();
+  context.decodeAudioData(arrayBuffer, function (decodedData) {
+    source.buffer = decodedData;
+  });
+  source.connect(gain);
+  gain.connect(context.destination);
+
+  // Start audio
+  source.start(0);
+  
+};
 
 async function eventTargetFile(uri) {
   const res = await fetch(uri);
@@ -220,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 */
 // Toggle loop
-loopToggleBox.addEventListener(eventWrap.CLICK, function() {
+loopToggleBox.addEventListener(eventWrap.CLICK, function () {
   if (source instanceof AudioBufferSourceNode) {
     source.loop = this.checked;
   }

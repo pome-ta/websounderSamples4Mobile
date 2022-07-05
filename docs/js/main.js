@@ -131,21 +131,40 @@ let source = null;
 const gain = context.createGain();
 
 function startAudio(arrayBuffer) {
-  console.log(arrayBuffer);
   source = context.createBufferSource();
+  /*const audioBuffer = context.decodeAudioData(arrayBuffer).then((decodedData) => {
+    //console.log(decodedData);
+    return decodedData;
+  });*/
+  
+  //decodeAudioData
+  //const audioBuffer = await LoadBuffer(context, )
+  
+  
   //context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
   //source.buffer = audioBuffer;
-  source.buffer = context.decodeAudioData(audioBuffer);
-  source.playbackRate.value = rateRange.valueAsNumber;
-  source.loop = loopToggleBox.checked;
+  //source.buffer = audioBuffer;
+  //source.playbackRate.value = rateRange.valueAsNumber;
+  //source.loop = loopToggleBox.checked;
  
   // AudioBufferSourceNode (Input) -> GainNode (Volume) -> AudioDestinationNode (Output)
+  //console.log(source);
+  
+  context.decodeAudioData(arrayBuffer).then(function(decodedData) {
+    // デコードしたデータをここで使う
+    console.log(decodedData);
+    source.buffer = decodedData;
+    
+});
+console.log(loopToggleBox.checked);
+//loopToggleBox.checked
+  
   source.connect(gain);
   gain.connect(context.destination);
  
   // Start audio
   source.start(0);
-  context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
+  //context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
 }
 
 async function eventTargetFile(uri) {
@@ -157,6 +176,10 @@ async function eventTargetFile(uri) {
   }));
   // xxx: error Handling
   return new File([data.blob], uri, { type: data.contentType });
+}
+
+async function LoadBuffer(actx, buffer) {
+  return actx.decodeAudioData(buffer);
 }
 
 /* Events */

@@ -124,6 +124,7 @@ const startAudio = (arrayBuffer) => {
   gain.connect(context.destination);
   // Start audio
   source.start(0);
+
   source.onended = function (event) {
     const uploader = fileUploadAudioButton;
     uploader.disabled = false;
@@ -157,6 +158,7 @@ fileUploadAudioButton.addEventListener(eventWrap.start, async () => {
   uploader.disabled = true;
   uploader.textContent = 'Now Loading...';
   const progressArea = selectAudioName;
+
   const file = await eventTargetFile(soundPath);
   // xxx: error Handling
   const reader = new FileReader();
@@ -180,8 +182,15 @@ fileUploadAudioButton.addEventListener(eventWrap.start, async () => {
 });
 
 // Toggle loop
-loopToggleBox.addEventListener(eventWrap.CLICK, function () {
+loopToggleBox.addEventListener(eventWrap.click, function () {
   if (source instanceof AudioBufferSourceNode) {
     source.loop = this.checked;
   }
 });
+
+// todo: wake up AudioContext
+function initAudioContext() {
+  document.removeEventListener(eventWrap.start, initAudioContext);
+  context.resume();
+}
+document.addEventListener(eventWrap.start, initAudioContext);

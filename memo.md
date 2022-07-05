@@ -15,6 +15,16 @@ event.initEvent('ended', true, true);
 
 現在、`click` イベントだから、`tap` にすれば解決ってことか？
 
+
+[Web Audio APIの闇 - Qiita](https://qiita.com/zprodev/items/7fcd8335d7e8e613a01f)
+
+[WebからFetch APIで取得したファイルをJavaScriptのFileオブジェクトとして扱う方法 - Qiita](https://qiita.com/riversun/items/284f44b0a9950e9bdae2)
+
+
+
+
+
+
 # 📝 2022/07/04
 
 ## `setAppendChild` 手順

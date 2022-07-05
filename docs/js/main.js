@@ -103,7 +103,7 @@ const setupDOM = () => {
   //loopToggleLabel.insertAdjacentElement('afterbegin', loopToggleBox);
 
   //setAppendChild([loopToggleLabel], loopToggleSection);
-  
+
   const loopToggleSection = setAppendChild(
     [loopToggleLabel, [loopToggleBox, loopToggleCaption]],
     createSection()

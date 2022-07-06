@@ -33,6 +33,7 @@ const setupDOM = () => {
   // START / PAUSE
   const captionPlayPause = document.createTextNode(labelValues.join(' / '));
   playPauseButton = createButton('sound', labelValues[0]);
+  playPauseButton.style.width = '100%';
 
   const playPauseWrap = setAppendChild(
     [captionPlayPause, playPauseButton],
@@ -93,14 +94,12 @@ const setupDOM = () => {
   // Audio
   const audioWrap = document.createElement('div');
   audioWrap.style.width = '100%';
-  //audioWrap.style.height = '4rem';
 
   audio = new Audio(soundPath);
   audio.controls = true;
   audio.style.display = 'block';
-  audio.style.width = '80%';
-  //audio.style.height = '100%';
-  audio.style.margin = 'auto';  // xxx: うまく中央に
+  audio.style.width = '100%';
+  audio.style.margin = 'auto';
   const audioSection = setAppendChild([audioWrap, [audio]], createSection());
 
   // overall DOM setup
@@ -124,62 +123,51 @@ const context = new AudioContext(); // xxx: prefix
 const source = context.createMediaElementSource(audio);
 
 const gain = context.createGain();
-
+const gainMin = gain.gain.minValue || 0;
+const gainMax = gain.gain.maxValue || 1;
 source.connect(gain);
 gain.connect(context.destination);
 
-function setupAudioControllers() {
-  console.log('audio cnt set');
+function updateControllers() {
+  // xxx: 複数同時に、再描画されるから無駄が多い？
+  // Control Master Volume
+  if (
+    volumeRange.valueAsNumber >= gainMin &&
+    volumeRange.valueAsNumber <= gainMax
+  ) {
+    gain.gain.value = volumeRange.valueAsNumber;
+    volumeRangeValue.textContent = parseValueNum(volumeRange);
+  }
+
+  if (audio instanceof HTMLAudioElement) {
+    // Control playbackRate
+    audio.playbackRate = rateRange.valueAsNumber;
+    // Audio Controller is visible ?
+    audio.style.visibility = audioToggleBox.checked ? 'visible' : 'hidden';
+  }
+  // Control playbackRate
+  playbackRateValue.textContent = parseValueNum(rateRange);
 }
-
-
-
 
 /* Events */
 const eventWrap = new EventWrapper();
 
 // Audio Controller is visible ?
-audioToggleBox.addEventListener(eventWrap.click, function(){
-  // `if` 不要？
-  if (audio instanceof HTMLAudioElement) {
-    //audio.controls = this.checked;
-    //audio.style.display = this.checked ? 'block' : 'none';
-    audio.style.visibility = this.checked ? 'visible' : 'hidden';
-  }
-  
-});
-
+audioToggleBox.addEventListener(eventWrap.click, updateControllers);
 // Control Master Volume
-volumeRange.addEventListener('input', function () {
-  const min = gain.gain.minValue || 0;
-  const max = gain.gain.maxValue || 1;
-  const valueAsNumber = this.valueAsNumber;
-  if (valueAsNumber >= min && valueAsNumber <= max) {
-    gain.gain.value = valueAsNumber;
-    volumeRangeValue.textContent = parseValueNum(this);
-  }
-});
-
+volumeRange.addEventListener('input', updateControllers);
 // Control playbackRate
-rateRange.addEventListener('input', function () {
-  if (audio instanceof HTMLAudioElement) {
-    // xxx: `min`, `max` 無くなった？
-audio.playbackRate = this.valueAsNumber;
-    
-  }
-  playbackRateValue.textContent = parseValueNum(this);
-});
+rateRange.addEventListener('input', updateControllers);
 
-function actionPlayPause() {
+playPauseButton.addEventListener(eventWrap.start, function () {
   //context.state === 'suspended' ? context.resume() : null;  // xxx: 読み込みでラグる
   // xxx: ビット排他的理論和処理。無駄に
   const isPlayFlag = labelValues.indexOf(this.textContent) ^ 1;
   isPlayFlag ? audio.play() : audio.pause();
   this.textContent = labelValues[isPlayFlag];
-}
-playPauseButton.addEventListener(eventWrap.start, actionPlayPause);
+});
 
-
+document.addEventListener('DOMContentLoaded', updateControllers);
 
 // todo: wake up AudioContext
 function initAudioContext() {

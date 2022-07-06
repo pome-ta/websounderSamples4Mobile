@@ -11,8 +11,8 @@
 
 
 ``` .js
-+ audio.playbackRate = this.valueAsNumber;
-audio.playbackRate.value = this.valueAsNumber;
+audio.playbackRate = this.valueAsNumber;
+audio.playbackRate.value = this.valueAsNumber; // reed Onlyで怒られる
 ```
 
 

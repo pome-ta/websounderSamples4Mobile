@@ -17,6 +17,8 @@ let playbackRateValue, rateRange;
 let audioToggleBox;
 let audio;
 
+let delayRangeValue,delayRange;
+
 const labelValues = ['Play', 'Pause'];
 
 const setupDOM = () => {
@@ -25,10 +27,10 @@ const setupDOM = () => {
     'MediaElementAudioSourceNode | オーディオデータの再生';
   mainTitleHeader.style.fontSize = '0.8rem';
 
-  // controller
-  const controlView = document.createElement('article');
-  controlView.style.width = '92%';
-  controlView.style.margin = 'auto';
+  // main controller
+  const mainControlView = document.createElement('article');
+  mainControlView.style.width = '92%';
+  mainControlView.style.margin = '1rem auto';
 
   // START / PAUSE
   const captionPlayPause = document.createTextNode(labelValues.join(' / '));
@@ -102,10 +104,37 @@ const setupDOM = () => {
   audio.style.margin = 'auto';
   const audioSection = setAppendChild([audioWrap, [audio]], createSection());
 
+  // DELAY controller
+  const delayControlView = document.createElement('article');
+  delayControlView.style.width = '92%';
+  delayControlView.style.margin = '1rem auto';
+  
+  // DELAY
+  const delayRangeCaption = document.createTextNode('DELAY : ');
+  delayRangeValue = document.createElement('span');
+  const delayUnitCaption = document.createTextNode('sec');
+  
+  const delayRangeWrap = document.createElement('div');
+  delayRangeWrap.style.width = '88%';
+  delayRangeWrap.style.margin = 'auto';
+  delayRange = createInputRange({
+    id: 'range-delay-time',
+    min: 0.0,
+    max: 1.0,
+    step: 0.05,
+    value: 1.0,
+    numtype: 'float',
+  });
+  const delay.RangeSection = setAppendChild(
+    [delayRangeCaption, playbackRateValue, rateRangeWrap, [rateRange]],
+    createSection()
+  );
+  
+
   // overall DOM setup
   setAppendChild([
     mainTitleHeader,
-    controlView,
+    mainControlView,
     [
       playPauseWrap,
       volumeRangeSection,
@@ -113,6 +142,7 @@ const setupDOM = () => {
       audioToggleSection,
       audioSection,
     ],
+    delayControlView,
   ]);
 };
 
@@ -125,6 +155,14 @@ const source = context.createMediaElementSource(audio);
 const gain = context.createGain();
 const gainMin = gain.gain.minValue || 0;
 const gainMax = gain.gain.maxValue || 1;
+
+const delay = context.createDelay();
+const delayIn = context.createGain();
+const delayOut = context.createGain();
+const dry = context.createGain();
+const wet = context.createGain();
+const feedback = context.createGain();
+
 source.connect(gain);
 gain.connect(context.destination);
 

@@ -9,44 +9,33 @@ import {
 
 import { EventWrapper } from './EventWrapper.js';
 
+const soundPath = './sounds/loop.wav';
 /* setup document node element */
-let selectAudioName, fileUploadAudioButton;
+let playPauseButton;
 let volumeRangeValue, volumeRange;
 let playbackRateValue, rateRange;
-let loopToggleBox;
-let stopAudioButton;
+let audioToggleBox;
+let audio;
 
-let playPauseButton;
 const labelValues = ['Play', 'Pause'];
 
 const setupDOM = () => {
-  //audio = document.createElement('audio');
-  //audio.setAttribute('src', soundPath);
-  //audio.src = soundPath;
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent =
     'MediaElementAudioSourceNode | オーディオデータの再生';
-  mainTitleHeader.style.fontSize = '1rem';
+  mainTitleHeader.style.fontSize = '0.8rem';
 
   // controller
   const controlView = document.createElement('article');
   controlView.style.width = '92%';
   controlView.style.margin = 'auto';
 
+  // START / PAUSE
   const captionPlayPause = document.createTextNode(labelValues.join(' / '));
   playPauseButton = createButton('sound', labelValues[0]);
 
-  const buttonWrap = setAppendChild(
+  const playPauseWrap = setAppendChild(
     [captionPlayPause, playPauseButton],
-    createSection()
-  );
-
-  // SELECT AUDIO FILE
-  const selectAudioCaption = document.createTextNode('SELECT AUDIO FILE : ');
-  selectAudioName = document.createElement('span');
-  fileUploadAudioButton = createButton('file-upload-audio', 'Upload');
-  const selectAudioSection = setAppendChild(
-    [selectAudioCaption, selectAudioName, fileUploadAudioButton],
     createSection()
   );
 
@@ -88,36 +77,40 @@ const setupDOM = () => {
     createSection()
   );
 
-  // LOOP
-  const loopToggleCaption = document.createTextNode(' LOOP');
-  loopToggleBox = createCheckbox({
+  // audioControls
+  const audioToggleCaption = document.createTextNode(' Controls');
+  audioToggleBox = createCheckbox({
     id: 'loopToggle',
   });
-  const loopToggleLabel = document.createElement('label');
-  loopToggleLabel.htmlFor = loopToggleBox.id;
-  loopToggleLabel.style.cursor = 'pointer';
-  const loopToggleSection = setAppendChild(
-    [loopToggleLabel, [loopToggleBox, loopToggleCaption]],
+  const audioToggleLabel = document.createElement('label');
+  audioToggleLabel.htmlFor = audioToggleBox.id;
+  audioToggleLabel.style.cursor = 'pointer';
+  const audioToggleSection = setAppendChild(
+    [audioToggleLabel, [audioToggleBox, audioToggleCaption]],
     createSection()
   );
 
-  const stopButtonWrap = document.createElement('div');
-  stopButtonWrap.style.padding = '2rem';
-  stopButtonWrap.style.margin = 'auto';
-  stopAudioButton = createButton('stop', '🤚 Stop Audio');
+  // Audio
+  const audioWrap = document.createElement('div');
+  audioWrap.style.width = '100%';
+  audioWrap.style.height = '2rem';
+  audio = new Audio(soundPath);
+  audio.controls = audioToggleBox.checked;
+  audio.style.width = '100%';
+  audio.style.height = '100%';
+  audio.style.margin = 'auto';  // xxx: うまく中央に
+  const audioSection = setAppendChild([audioWrap, [audio]], createSection());
 
   // overall DOM setup
   setAppendChild([
     mainTitleHeader,
     controlView,
     [
-      buttonWrap,
-      selectAudioSection,
+      playPauseWrap,
       volumeRangeSection,
       playbackRateSection,
-      loopToggleSection,
-      stopButtonWrap,
-      [stopAudioButton],
+      audioToggleSection,
+      audioSection,
     ],
   ]);
 };
@@ -125,14 +118,12 @@ const setupDOM = () => {
 setupDOM();
 
 /* audio */
-const soundPath = './sounds/loop.wav';
-const audio = new Audio(soundPath);
-
 const context = new AudioContext(); // xxx: prefix
 const source = context.createMediaElementSource(audio);
 source.connect(context.destination);
 
 function actionPlayPause() {
+  //context.state === 'suspended' ? context.resume() : null;  // xxx: 読み込みでラグる
   // xxx: ビット排他的理論和処理。無駄に
   const isPlayFlag = labelValues.indexOf(this.textContent) ^ 1;
   isPlayFlag ? audio.play() : audio.pause();
@@ -142,6 +133,12 @@ function actionPlayPause() {
 /* Events */
 const eventWrap = new EventWrapper();
 
+audioToggleBox.addEventListener(eventWrap.click, function(){
+  if (audio instanceof HTMLAudioElement) {
+    audio.controls = this.checked;
+  }
+  
+});
 playPauseButton.addEventListener(eventWrap.start, actionPlayPause);
 
 // todo: wake up AudioContext

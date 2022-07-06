@@ -1,5 +1,10 @@
 # 📝 2022/07/06
 
+
+
+[<audio>: 埋め込み音声要素 - HTML: HyperText Markup Language | MDN](https://developer.mozilla.org/ja/docs/Web/HTML/Element/audio)
+
+
 ## `addEventListener` たち
 
 `this` の方が都合いいけど、初期立ち上げでも読み込ませたい
@@ -36,6 +41,8 @@ event.initEvent('ended', true, true);
 [Web Audio API の闇 - Qiita](https://qiita.com/zprodev/items/7fcd8335d7e8e613a01f)
 
 [Web から Fetch API で取得したファイルを JavaScript の File オブジェクトとして扱う方法 - Qiita](https://qiita.com/riversun/items/284f44b0a9950e9bdae2)
+
+[音を操るWeb技術 - Web Audio API入門 - ICS MEDIA](https://ics.media/entry/200427/)
 
 # 📝 2022/07/04
 

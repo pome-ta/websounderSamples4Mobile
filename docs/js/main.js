@@ -9,7 +9,12 @@ import {
 
 import { EventWrapper } from './EventWrapper.js';
 
+
+
+
+const soundPath = './sounds/loop.wav';
 /* setup document node element */
+let audio;
 let selectAudioName, fileUploadAudioButton;
 let volumeRangeValue, volumeRange;
 let playbackRateValue, rateRange;
@@ -17,6 +22,9 @@ let loopToggleBox;
 let stopAudioButton;
 
 const setupDOM = () => {
+  audio = document.createElement('audio');
+  //audio.setAttribute('src', soundPath);
+  audio.src = soundPath;
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent =
     'AudioBufferSourceNode | オーディオデータの再生';
@@ -110,133 +118,18 @@ const setupDOM = () => {
 setupDOM();
 
 /* audio */
-const soundPath = './sounds/loop.wav';
+//const soundPath = './sounds/loop.wav';
 const context = new AudioContext(); // xxx: prefix
-let source = null;
-const gain = context.createGain();
+const source = context.createMediaElementSource(audio);
+source.connect(context.destination);
 
-const startAudio = (arrayBuffer) => {
-  source = context.createBufferSource();
-  context
-    .decodeAudioData(arrayBuffer)
-    .then((decodedData) => (source.buffer = decodedData));
-  source.connect(gain);
-  gain.connect(context.destination);
-  // Start audio
-  source.start(0);
-
-  source.onended = function (event) {
-    const uploader = fileUploadAudioButton;
-    uploader.disabled = false;
-    uploader.textContent = 'Upload';
-
-    const progressArea = selectAudioName;
-    progressArea.textContent = '';
-
-    source.onended = null;
-    source.stop(0);
-    // console.log(`STOP by 'on ${event.type}' event handler !! `);
-  };
-};
-
-async function eventTargetFile(uri) {
-  const res = await fetch(uri);
-  // xxx: error Handling
-  const data = await res.blob().then((blob) => ({
-    contentType: res.headers.get('Content-Type'),
-    blob: blob,
-  }));
-  // xxx: error Handling
-  return new File([data.blob], uri, { type: data.contentType });
-}
 
 /* Events */
 const eventWrap = new EventWrapper();
-
-fileUploadAudioButton.addEventListener(eventWrap.start, async () => {
-  const uploader = fileUploadAudioButton;
-  uploader.disabled = true;
-  uploader.textContent = 'Now Loading...';
-  const progressArea = selectAudioName;
-
-  const file = await eventTargetFile(soundPath);
-  // xxx: error Handling
-  const reader = new FileReader();
-  reader.onprogress = (event) => {
-    // xxx: `fetch` の時点で、もう取得終えてる？
-    if (event.lengthComputable && event.total > 0) {
-      const rate = Math.floor((event.loaded / event.total) * 100);
-      progressArea.textContent = `${rate} %`;
-    }
-  };
-  // xxx: error Handling
-  // Success read
-  reader.onload = () => {
-    const arrayBuffer = reader.result;
-    startAudio(arrayBuffer);
-    progressArea.textContent = file.name;
-    uploader.textContent = 'Complete !!';
-  };
-  // Read the instance of File
-  reader.readAsArrayBuffer(file);
-});
-
-// Control Volume
-volumeRange.addEventListener('input', function () {
-  const min = gain.gain.minValue || 0;
-  const max = gain.gain.maxValue || 1;
-  const valueAsNumber = this.valueAsNumber;
-  if (valueAsNumber >= min && valueAsNumber <= max) {
-    gain.gain.value = valueAsNumber;
-    volumeRangeValue.textContent = parseValueNum(this);
-  }
-});
-
-// Control playbackRate
-rateRange.addEventListener('input', function () {
-  if (source instanceof AudioBufferSourceNode) {
-    const min = source.playbackRate.minValue || 0;
-    const max = source.playbackRate.maxValue || 1024;
-    const valueAsNumber = this.valueAsNumber;
-
-    if (valueAsNumber >= min && valueAsNumber <= max) {
-      source.playbackRate.value = valueAsNumber;
-    }
-  }
-  playbackRateValue.textContent = parseValueNum(this);
-});
-
-// Toggle loop
-loopToggleBox.addEventListener(eventWrap.click, function () {
-  if (source instanceof AudioBufferSourceNode) {
-    source.loop = this.checked;
-  }
-});
-
-stopAudioButton.addEventListener(eventWrap.click, function () {
-  if (source instanceof AudioBufferSourceNode) {
-    const uploader = fileUploadAudioButton;
-    uploader.disabled = false;
-    uploader.textContent = 'Upload';
-
-    const progressArea = selectAudioName;
-    progressArea.textContent = '';
-
-    source.onended = null;
-    source.stop(0);
-  }
-});
-
-// setup
-document.addEventListener('DOMContentLoaded', () => {
-  // xxx: 初期化、再生時に難あり
-  volumeRangeValue.textContent = parseValueNum(volumeRange);
-  playbackRateValue.textContent = parseValueNum(rateRange);
-});
 
 // todo: wake up AudioContext
 function initAudioContext() {
   document.removeEventListener(eventWrap.start, initAudioContext);
   context.resume();
 }
-document.addEventListener(eventWrap.start, initAudioContext);
+//document.addEventListener(eventWrap.start, initAudioContext);

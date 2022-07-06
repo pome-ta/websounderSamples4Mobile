@@ -93,11 +93,13 @@ const setupDOM = () => {
   // Audio
   const audioWrap = document.createElement('div');
   audioWrap.style.width = '100%';
-  audioWrap.style.height = '2rem';
+  //audioWrap.style.height = '4rem';
+
   audio = new Audio(soundPath);
-  audio.controls = audioToggleBox.checked;
-  audio.style.width = '100%';
-  audio.style.height = '100%';
+  audio.controls = true;
+  audio.style.display = 'block';
+  audio.style.width = '80%';
+  //audio.style.height = '100%';
   audio.style.margin = 'auto';  // xxx: うまく中央に
   const audioSection = setAppendChild([audioWrap, [audio]], createSection());
 
@@ -120,7 +122,53 @@ setupDOM();
 /* audio */
 const context = new AudioContext(); // xxx: prefix
 const source = context.createMediaElementSource(audio);
-source.connect(context.destination);
+
+const gain = context.createGain();
+
+source.connect(gain);
+gain.connect(context.destination);
+
+function setupAudioControllers() {
+  console.log('audio cnt set');
+}
+
+
+
+
+/* Events */
+const eventWrap = new EventWrapper();
+
+// Audio Controller is visible ?
+audioToggleBox.addEventListener(eventWrap.click, function(){
+  // `if` 不要？
+  if (audio instanceof HTMLAudioElement) {
+    //audio.controls = this.checked;
+    //audio.style.display = this.checked ? 'block' : 'none';
+    audio.style.visibility = this.checked ? 'visible' : 'hidden';
+  }
+  
+});
+
+// Control Master Volume
+volumeRange.addEventListener('input', function () {
+  const min = gain.gain.minValue || 0;
+  const max = gain.gain.maxValue || 1;
+  const valueAsNumber = this.valueAsNumber;
+  if (valueAsNumber >= min && valueAsNumber <= max) {
+    gain.gain.value = valueAsNumber;
+    volumeRangeValue.textContent = parseValueNum(this);
+  }
+});
+
+// Control playbackRate
+rateRange.addEventListener('input', function () {
+  if (audio instanceof HTMLAudioElement) {
+    // xxx: `min`, `max` 無くなった？
+audio.playbackRate = this.valueAsNumber;
+    
+  }
+  playbackRateValue.textContent = parseValueNum(this);
+});
 
 function actionPlayPause() {
   //context.state === 'suspended' ? context.resume() : null;  // xxx: 読み込みでラグる
@@ -129,17 +177,9 @@ function actionPlayPause() {
   isPlayFlag ? audio.play() : audio.pause();
   this.textContent = labelValues[isPlayFlag];
 }
-
-/* Events */
-const eventWrap = new EventWrapper();
-
-audioToggleBox.addEventListener(eventWrap.click, function(){
-  if (audio instanceof HTMLAudioElement) {
-    audio.controls = this.checked;
-  }
-  
-});
 playPauseButton.addEventListener(eventWrap.start, actionPlayPause);
+
+
 
 // todo: wake up AudioContext
 function initAudioContext() {

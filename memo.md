@@ -5,6 +5,17 @@
 [<audio>: 埋め込み音声要素 - HTML: HyperText Markup Language | MDN](https://developer.mozilla.org/ja/docs/Web/HTML/Element/audio)
 
 
+## `MediaElementAudioSourceNode` の`playbackRate`
+
+ピッチ変わらずだから、再生がちょっと変になる
+
+
+``` .js
++ audio.playbackRate = this.valueAsNumber;
+- audio.playbackRate.value = this.valueAsNumber;
+```
+
+
 ## `addEventListener` たち
 
 `this` の方が都合いいけど、初期立ち上げでも読み込ませたい

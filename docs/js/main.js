@@ -3,6 +3,7 @@ import {
   createButton,
   createInputRange,
   createCheckbox,
+  createSelectOpitons,
   createSection,
   setAppendChild,
 } from './customDOMfuncs.js';
@@ -24,14 +25,26 @@ let dryRangeValue, dryRange;
 let wetRangeValue, wetRange;
 let feedbackRangeValue, feedbackRange;
 
+const filterTypes = [
+  'lowpass',
+  'highpass',
+  'bandpass',
+  'lowshelf',
+  'highshelf',
+  'peaking',
+  'notch',
+  'allpass'
+];
+let typeSelect;
+
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent =
     'MediaElementAudioSourceNode | オーディオデータの再生';
   mainTitleHeader.style.fontSize = '0.8rem';
 
-  // main controller
-  const setupMainControl = () => {
+  /* main controller */
+  const setupMainController = () => {
     // START / PAUSE
     const captionPlayPause = document.createTextNode(labelValues.join(' / '));
     playPauseButton = createButton('sound', labelValues[0]);
@@ -115,8 +128,8 @@ const setupDOM = () => {
     );
   };
 
-  // DELAY controller
-  const setupDelayControl = () => {
+  /* DELAY controller */
+  const setupDelayController = () => {
     // DELAY
     const delayRangeCaption = document.createTextNode('DELAY : ');
     delayRangeValue = document.createElement('span');
@@ -216,15 +229,46 @@ const setupDOM = () => {
     );
   };
 
-  const mainControlView = setupMainControl();
-  const delayControlView = setupDelayControl();
+  /* FILTER controller */
+  const setupFilterController = () => {
+    // FILTER TYPE
+    const filterTypeCaption = document.createTextNode('FILTER TYPE : ');
+    const filterTypeWrap = document.createElement('div');
+    filterTypeWrap.style.width = '88%';
+    filterTypeWrap.style.margin = 'auto';
+    typeSelect = createSelectOpitons({
+      id: 'select-filter',
+      options: filterTypes
+    });
+    const filterTypeSection = setAppendChild(
+      [
+        filterTypeCaption,filterTypeWrap,
+        [typeSelect,]
+      ],
+      createSection()
+    );
+    
+    
+    return setAppendChild(
+      [
+        filterTypeSection,
+        
+      ],
+      document.createElement('article')
+    );
+    
+  };
 
-  [mainControlView, delayControlView].forEach((views) => {
+  const mainControlView = setupMainController();
+  const delayControlView = setupDelayController();
+  const filterControlView = setupFilterController();
+
+  [mainControlView, delayControlView, filterControlView].forEach((views) => {
     views.style.width = '92%';
     views.style.margin = '1rem auto';
   });
   // overall DOM setup
-  setAppendChild([mainTitleHeader, mainControlView, delayControlView]);
+  setAppendChild([mainTitleHeader, mainControlView, delayControlView, filterControlView]);
 };
 
 setupDOM();

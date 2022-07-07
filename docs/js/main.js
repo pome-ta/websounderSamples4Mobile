@@ -10,16 +10,19 @@ import {
 import { EventWrapper } from './EventWrapper.js';
 
 const soundPath = './sounds/loop.wav';
+
 /* setup document node element */
+const labelValues = ['Play', 'Pause'];
 let playPauseButton;
 let volumeRangeValue, volumeRange;
 let playbackRateValue, rateRange;
 let audioToggleBox;
 let audio;
 
-let delayRangeValue,delayRange;
-
-const labelValues = ['Play', 'Pause'];
+let delayRangeValue, delayRange;
+let dryRangeValue, dryRange;
+let wetRangeValue, wetRange;
+let feedbackRangeValue, feedbackRange;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -108,12 +111,11 @@ const setupDOM = () => {
   const delayControlView = document.createElement('article');
   delayControlView.style.width = '92%';
   delayControlView.style.margin = '1rem auto';
-  
+
   // DELAY
   const delayRangeCaption = document.createTextNode('DELAY : ');
   delayRangeValue = document.createElement('span');
   const delayUnitCaption = document.createTextNode('sec');
-  
   const delayRangeWrap = document.createElement('div');
   delayRangeWrap.style.width = '88%';
   delayRangeWrap.style.margin = 'auto';
@@ -122,14 +124,81 @@ const setupDOM = () => {
     min: 0.0,
     max: 1.0,
     step: 0.05,
+    value: 0.0,
+    numtype: 'float',
+  });
+  const delayRangeSection = setAppendChild(
+    [
+      delayRangeCaption,
+      delayRangeValue,
+      delayUnitCaption,
+      delayRangeWrap,
+      [delayRange],
+    ],
+    createSection()
+  );
+
+  // DRY
+  const dryRangeCaption = document.createTextNode('DRY : ');
+  dryRangeValue = document.createElement('span');
+  const dryRangeWrap = document.createElement('div');
+  dryRangeWrap.style.width = '88%';
+  dryRangeWrap.style.margin = 'auto';
+  dryRange = createInputRange({
+    id: 'range-delay-dry',
+    min: 0.0,
+    max: 1.0,
+    step: 0.05,
     value: 1.0,
     numtype: 'float',
   });
-  const delay.RangeSection = setAppendChild(
-    [delayRangeCaption, playbackRateValue, rateRangeWrap, [rateRange]],
+  const dryRangeSection = setAppendChild(
+    [dryRangeCaption, dryRangeValue, dryRangeWrap, [dryRange]],
     createSection()
   );
-  
+
+  // WET
+  const wetRangeCaption = document.createTextNode('WET : ');
+  wetRangeValue = document.createElement('span');
+  const wetRangeWrap = document.createElement('div');
+  wetRangeWrap.style.width = '88%';
+  wetRangeWrap.style.margin = 'auto';
+  wetRange = createInputRange({
+    id: 'range-delay-wet',
+    min: 0.0,
+    max: 1.0,
+    step: 0.05,
+    value: 0.0,
+    numtype: 'float',
+  });
+  const wetRangeSection = setAppendChild(
+    [wetRangeCaption, wetRangeValue, wetRangeWrap, [wetRange]],
+    createSection()
+  );
+
+  // FEEDBACK
+  const feedbackRangeCaption = document.createTextNode('FEEDBACK : ');
+  feedbackRangeValue = document.createElement('span');
+  const feedbackRangeWrap = document.createElement('div');
+  feedbackRangeWrap.style.width = '88%';
+  feedbackRangeWrap.style.margin = 'auto';
+  feedbackRange = createInputRange({
+    id: 'range-delay-feedback',
+    min: 0.0,
+    max: 1.0,
+    step: 0.05,
+    value: 0.0,
+    numtype: 'float',
+  });
+  const feedbackRangeSection = setAppendChild(
+    [
+      feedbackRangeCaption,
+      feedbackRangeValue,
+      feedbackRangeWrap,
+      [feedbackRange],
+    ],
+    createSection()
+  );
 
   // overall DOM setup
   setAppendChild([
@@ -143,6 +212,7 @@ const setupDOM = () => {
       audioSection,
     ],
     delayControlView,
+    [delayRangeSection, dryRangeSection, wetRangeSection, feedbackRangeSection],
   ]);
 };
 
@@ -162,6 +232,12 @@ const delayOut = context.createGain();
 const dry = context.createGain();
 const wet = context.createGain();
 const feedback = context.createGain();
+
+delayIn.gain.value = 1.0;
+delayOut.gain.value = 1.0;
+dry.gain.value = parseValueNum(dryRange);
+wet.gain.value = parseValueNum(wetRange);
+feedback.gain.value = parseValueNum(feedbackRange);
 
 source.connect(gain);
 gain.connect(context.destination);

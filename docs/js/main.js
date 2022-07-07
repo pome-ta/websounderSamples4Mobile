@@ -239,7 +239,29 @@ dry.gain.value = parseValueNum(dryRange);
 wet.gain.value = parseValueNum(wetRange);
 feedback.gain.value = parseValueNum(feedbackRange);
 
-source.connect(gain);
+const minDelayTime = delay.delayTime.minValue || 0;
+const maxDelayTime = delay.delayTime.maxValue || 1;
+const minDry = dry.gain.minValue || 0;
+const maxDry = dry.gain.maxValue || 1;
+const minWet = wet.gain.minValue || 0;
+const maxWet = wet.gain.maxValue || 1;
+const minFeedback = feedback.gain.minValue || 0;
+const maxFeedback = feedback.gain.maxValue || 1;
+
+// GainNode (Input) -> GainNode (Dry) -> GainNode (Output)
+delayIn.connect(dry);
+dry.connect(delayOut);
+// GainNode (Input) -> DelayNode (Delay) -> GainNode (Wet) -> GainNode (Output)
+delayIn.connect(delay);
+delay.connect(wet);
+wet.connect(delayOut);
+
+// (GainNode (Input) ->) DelayNode (Delay) -> GainNode (Feedback) -> DelayNode (Delay) ...
+delay.connect(feedback);
+feedback.connect(delay);
+
+source.connect(delayIn);
+delayOut.connect(gain);
 gain.connect(context.destination);
 
 function updateControllers() {
@@ -261,6 +283,34 @@ function updateControllers() {
   }
   // Control playbackRate
   playbackRateValue.textContent = parseValueNum(rateRange);
+
+  // Control Delay Time
+  if (
+    delayRange.valueAsNumber >= minDelayTime &&
+    delayRange.valueAsNumber <= maxDelayTime
+  ) {
+    delay.delayTime.value = delayRange.valueAsNumber;
+    delayRangeValue.textContent = parseValueNum(delayRange);
+  }
+
+  // Control Delay Dry
+  if (dryRange.valueAsNumber >= minDry && dryRange.valueAsNumber <= maxDry) {
+    dry.gain.value = dryRange.valueAsNumber;
+    dryRangeValue.textContent = parseValueNum(dryRange);
+  }
+  // Control Delay Wet
+  if (wetRange.valueAsNumber >= minWet && wetRange.valueAsNumber <= maxWet) {
+    wet.gain.value = wetRange.valueAsNumber;
+    wetRangeValue.textContent = parseValueNum(wetRange);
+  }
+  // Control Delay Feedback
+  if (
+    feedbackRange.valueAsNumber >= minFeedback &&
+    feedbackRange.valueAsNumber <= maxFeedback
+  ) {
+    feedback.gain.value = feedbackRange.valueAsNumber;
+    feedbackRangeValue.textContent = parseValueNum(feedbackRange);
+  }
 }
 
 /* Events */
@@ -272,6 +322,14 @@ audioToggleBox.addEventListener(eventWrap.click, updateControllers);
 volumeRange.addEventListener('input', updateControllers);
 // Control playbackRate
 rateRange.addEventListener('input', updateControllers);
+// Control Delay Time
+delayRange.addEventListener('input', updateControllers);
+// Control Delay Dry
+dryRange.addEventListener('input', updateControllers);
+// Control Delay Wet
+wetRange.addEventListener('input', updateControllers);
+// Control Delay Feedback
+feedbackRange.addEventListener('input', updateControllers);
 
 playPauseButton.addEventListener(eventWrap.start, function () {
   //context.state === 'suspended' ? context.resume() : null;  // xxx: 読み込みでラグる

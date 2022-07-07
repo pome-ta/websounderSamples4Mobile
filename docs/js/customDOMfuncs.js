@@ -38,7 +38,7 @@ export function createInputRange({ id, min, max, value, numtype, step = 1 }) {
   element.value = value;
   element.numtype = numtype;
   element.style.width = '100%';
-  element.style.height = '2rem';
+  element.style.height = '1rem';
   element.style.margin = 0;
   return element;
 }
@@ -52,6 +52,22 @@ export function createCheckbox({ id, checked = false }) {
   element.style.width = '1rem';
   element.style.height = '1rem';
   /*element.style.padding = '0 1rem';*/
+  return element;
+}
+
+export function createSelectOpitons({id, options}) {
+  const element = document.createElement('select');
+  element.id = id;
+  element.style.width = '100%';
+  element.style.height = '2rem';
+  element.style.margin = 0;
+  element.style.fontSize = '1rem';
+  for (const option of options) {
+    const optionElement = document.createElement('option');
+    optionElement.value = option.toLowerCase();
+    optionElement.text = option; //capitalize(type);
+    element.appendChild(optionElement);
+  }
   return element;
 }
 

@@ -1,20 +1,15 @@
 # 📝 2022/07/06
 
-
-
 [<audio>: 埋め込み音声要素 - HTML: HyperText Markup Language | MDN](https://developer.mozilla.org/ja/docs/Web/HTML/Element/audio)
-
 
 ## `MediaElementAudioSourceNode` の`playbackRate`
 
 ピッチ変わらずだから、再生がちょっと変になる
 
-
-``` .js
+```.js
 audio.playbackRate = this.valueAsNumber;
 audio.playbackRate.value = this.valueAsNumber; // reed Onlyで怒られる
 ```
-
 
 ## `addEventListener` たち
 
@@ -53,7 +48,7 @@ event.initEvent('ended', true, true);
 
 [Web から Fetch API で取得したファイルを JavaScript の File オブジェクトとして扱う方法 - Qiita](https://qiita.com/riversun/items/284f44b0a9950e9bdae2)
 
-[音を操るWeb技術 - Web Audio API入門 - ICS MEDIA](https://ics.media/entry/200427/)
+[音を操る Web 技術 - Web Audio API 入門 - ICS MEDIA](https://ics.media/entry/200427/)
 
 # 📝 2022/07/04
 

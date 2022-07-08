@@ -1,3 +1,9 @@
+# 📝 2022/07/08
+
+
+- [] slider 構築を関数でまとめる
+
+
 # 📝 2022/07/06
 
 [<audio>: 埋め込み音声要素 - HTML: HyperText Markup Language | MDN](https://developer.mozilla.org/ja/docs/Web/HTML/Element/audio)

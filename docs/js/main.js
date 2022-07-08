@@ -36,6 +36,7 @@ const filterTypes = [
   'allpass'
 ];
 let typeSelect;
+let cutoffRateValue, cutoffRange;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -133,7 +134,7 @@ const setupDOM = () => {
     // DELAY
     const delayRangeCaption = document.createTextNode('DELAY : ');
     delayRangeValue = document.createElement('span');
-    const delayUnitCaption = document.createTextNode('sec');
+    const delayUnitCaption = document.createTextNode(' sec');
     const delayRangeWrap = document.createElement('div');
     delayRangeWrap.style.width = '88%';
     delayRangeWrap.style.margin = 'auto';
@@ -248,10 +249,31 @@ const setupDOM = () => {
       createSection()
     );
     
+    //CUTOFF
+    const cutoffRangeCaption = document.createTextNode('CUTOFF : ');
+    cutoffRateValue = document.createElement('span');
+    const cutoffUnitCaption = document.createTextNode(' Hz');
+    const cutoffRangeWrap = document.createElement('div');
+    cutoffRangeWrap.style.width = '88%';
+    cutoffRangeWrap.style.margin = 'auto';
+    cutoffRange = createInputRange({
+      id: 'range-cutoff',
+      min: 20,
+      max: 8000,
+      value: 350,
+      numtype: 'int',
+    });
+    const cutoffRangeSection = setAppendChild(
+      [cutoffRangeCaption, cutoffRateValue, cutoffUnitCaption, cutoffRangeWrap, [cutoffRange]],
+      createSection()
+    );
+    
+    
     
     return setAppendChild(
       [
         filterTypeSection,
+        cutoffRangeSection
         
       ],
       document.createElement('article')

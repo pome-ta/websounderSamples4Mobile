@@ -180,11 +180,7 @@ const setupDOM = () => {
     );
 
     // WET
-    const wetRangeCaption = document.createTextNode('WET : ');
-    wetRangeValue = document.createElement('span');
-    const wetRangeWrap = document.createElement('div');
-    wetRangeWrap.style.width = '88%';
-    wetRangeWrap.style.margin = 'auto';
+    let wetRangeSection;
     wetRange = createInputRange({
       id: 'range-delay-wet',
       min: 0.0,
@@ -193,17 +189,13 @@ const setupDOM = () => {
       value: 0.0,
       numtype: 'float',
     });
-    const wetRangeSection = setAppendChild(
-      [wetRangeCaption, wetRangeValue, wetRangeWrap, [wetRange]],
-      createSection()
+    [wetRangeSection, wetRangeValue] = setupRangeToSectionInputValue(
+      wetRange,
+      'WET : '
     );
 
     // FEEDBACK
-    const feedbackRangeCaption = document.createTextNode('FEEDBACK : ');
-    feedbackRangeValue = document.createElement('span');
-    const feedbackRangeWrap = document.createElement('div');
-    feedbackRangeWrap.style.width = '88%';
-    feedbackRangeWrap.style.margin = 'auto';
+    let feedbackRangeSection;
     feedbackRange = createInputRange({
       id: 'range-delay-feedback',
       min: 0.0,
@@ -212,14 +204,9 @@ const setupDOM = () => {
       value: 0.0,
       numtype: 'float',
     });
-    const feedbackRangeSection = setAppendChild(
-      [
-        feedbackRangeCaption,
-        feedbackRangeValue,
-        feedbackRangeWrap,
-        [feedbackRange],
-      ],
-      createSection()
+    [feedbackRangeSection, feedbackRangeValue] = setupRangeToSectionInputValue(
+      feedbackRange,
+      'FEEDBACK : '
     );
 
     return setAppendChild(

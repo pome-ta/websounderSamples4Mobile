@@ -10,6 +10,37 @@ import {
 
 import { EventWrapper } from './EventWrapper.js';
 
+function setupRangeToSectionInputValue(
+  inputElement,
+  textCaptionStr,
+  unitCaptionStr = null
+) {
+  const textNodeCaption = document.createTextNode(textCaptionStr);
+  const inputValue = document.createElement('span');
+  /*
+  const textNodeUnit =
+    unitCaptionStr === null ? null : document.createTextNode(unitCaptionStr);
+*/
+  const wrap = document.createElement('div');
+  wrap.style.width = '88%';
+  wrap.style.margin = 'auto';
+/*
+  const setArray = [textNodeCaption, inputValue, textNodeUnit, wrap, [inputElement]].filter(
+      (child) => child !== null
+    );*/
+  //console.log(setArray);
+  const rangeSection = setAppendChild(
+  /*
+    [textNodeCaption, inputValue, textNodeUnit, wrap, [inputElement]].filter(
+      (child) => child !== null
+    )*/
+    [textNodeCaption, inputValue, wrap, [inputElement]],
+    createSection()
+  );
+
+  return rangeSection, inputValue;
+}
+
 const soundPath = './sounds/loop.wav';
 
 /* setup document node element */
@@ -33,7 +64,7 @@ const filterTypes = [
   'highshelf',
   'peaking',
   'notch',
-  'allpass'
+  'allpass',
 ];
 let typeSelect;
 let cutoffRateValue, cutoffRange;
@@ -56,11 +87,13 @@ const setupDOM = () => {
     );
 
     // VOLUME
+    /*
     const volumeRangeCaption = document.createTextNode('VOLUME : ');
     volumeRangeValue = document.createElement('span');
     const volumeRangeWrap = document.createElement('div');
     volumeRangeWrap.style.width = '88%';
     volumeRangeWrap.style.margin = 'auto';
+    */
     volumeRange = createInputRange({
       id: 'range-volume',
       min: 0.0,
@@ -69,10 +102,13 @@ const setupDOM = () => {
       value: 1.0,
       numtype: 'float',
     });
+    /*
     const volumeRangeSection = setAppendChild(
       [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
       createSection()
-    );
+    );*/
+    let volumeRangeSection;
+    volumeRangeSection, volumeRangeValue = [...setupRangeToSectionInputValue(volumeRange, 'VOLUME : ')];
 
     // PLAYBACK RATE
     const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
@@ -239,16 +275,13 @@ const setupDOM = () => {
     filterTypeWrap.style.margin = 'auto';
     typeSelect = createSelectOpitons({
       id: 'select-filter',
-      options: filterTypes
+      options: filterTypes,
     });
     const filterTypeSection = setAppendChild(
-      [
-        filterTypeCaption,filterTypeWrap,
-        [typeSelect,]
-      ],
+      [filterTypeCaption, filterTypeWrap, [typeSelect]],
       createSection()
     );
-    
+
     //CUTOFF
     const cutoffRangeCaption = document.createTextNode('CUTOFF : ');
     cutoffRateValue = document.createElement('span');
@@ -264,21 +297,20 @@ const setupDOM = () => {
       numtype: 'int',
     });
     const cutoffRangeSection = setAppendChild(
-      [cutoffRangeCaption, cutoffRateValue, cutoffUnitCaption, cutoffRangeWrap, [cutoffRange]],
+      [
+        cutoffRangeCaption,
+        cutoffRateValue,
+        cutoffUnitCaption,
+        cutoffRangeWrap,
+        [cutoffRange],
+      ],
       createSection()
     );
-    
-    
-    
+
     return setAppendChild(
-      [
-        filterTypeSection,
-        cutoffRangeSection
-        
-      ],
+      [filterTypeSection, cutoffRangeSection],
       document.createElement('article')
     );
-    
   };
 
   const mainControlView = setupMainController();
@@ -290,7 +322,12 @@ const setupDOM = () => {
     views.style.margin = '1rem auto';
   });
   // overall DOM setup
-  setAppendChild([mainTitleHeader, mainControlView, delayControlView, filterControlView]);
+  setAppendChild([
+    mainTitleHeader,
+    mainControlView,
+    delayControlView,
+    filterControlView,
+  ]);
 };
 
 setupDOM();

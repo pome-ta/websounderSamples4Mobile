@@ -92,11 +92,7 @@ const setupDOM = () => {
     );
 
     // PLAYBACK RATE
-    const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
-    playbackRateValue = document.createElement('span');
-    const rateRangeWrap = document.createElement('div');
-    rateRangeWrap.style.width = '88%';
-    rateRangeWrap.style.margin = 'auto';
+    let playbackRateSection;
     rateRange = createInputRange({
       id: 'range-playback-rate',
       min: 0.05,
@@ -105,10 +101,7 @@ const setupDOM = () => {
       value: 1.0,
       numtype: 'float',
     });
-    const playbackRateSection = setAppendChild(
-      [playbackRateCaption, playbackRateValue, rateRangeWrap, [rateRange]],
-      createSection()
-    );
+    [playbackRateSection, playbackRateValue] = setupRangeToSectionInputValue(rateRange, 'PLAYBACK RATE : ');
 
     // audioControls
     const audioToggleCaption = document.createTextNode(' Controls');

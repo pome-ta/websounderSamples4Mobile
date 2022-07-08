@@ -57,7 +57,9 @@ const filterTypes = [
   'allpass',
 ];
 let typeSelect;
-let cutoffRateValue, cutoffRange;
+let cutoffRangeValue, cutoffRange;
+let qualityRangeValue, qualityRange;
+let gainfilterRangeValue, gainfilterRange;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -101,7 +103,10 @@ const setupDOM = () => {
       value: 1.0,
       numtype: 'float',
     });
-    [playbackRateSection, playbackRateValue] = setupRangeToSectionInputValue(rateRange, 'PLAYBACK RATE : ');
+    [playbackRateSection, playbackRateValue] = setupRangeToSectionInputValue(
+      rateRange,
+      'PLAYBACK RATE : '
+    );
 
     // audioControls
     const audioToggleCaption = document.createTextNode(' Controls');
@@ -232,15 +237,47 @@ const setupDOM = () => {
       value: 350,
       numtype: 'int',
     });
-    [cutoffRangeSection, cutoffRateValue] = setupRangeToSectionInputValue(
+    [cutoffRangeSection, cutoffRangeValue] = setupRangeToSectionInputValue(
       cutoffRange,
       'CUTOFF : ',
       ' Hz'
     );
 
-    return [filterTypeSection, cutoffRangeSection];
+    // Q
+    let qualityRangeSection;
+    qualityRange = createInputRange({
+      id: 'range-Q',
+      min: 0,
+      max: 20,
+      value: 1,
+      numtype: 'int',
+    });
+    [qualityRangeSection, qualityRangeValue] = setupRangeToSectionInputValue(
+      qualityRange,
+      'Q : '
+    );
+
+    // GAIN
+    let gainfilterRangeSection;
+    gainfilterRange = createInputRange({
+      id: 'range-filter-gain',
+      min: 0,
+      max: 20,
+      value: 1,
+      numtype: 'int',
+    });
+    [gainfilterRangeSection, gainfilterRangeValue] =
+      setupRangeToSectionInputValue(gainfilterRange, 'GAIN : ', ' dB');
+
+    return [
+      filterTypeSection,
+      cutoffRangeSection,
+      qualityRangeSection,
+      gainfilterRangeSection,
+    ];
   };
 
+  /* article setting */
   const mainControlView = setAppendChild(
     setupMainController(),
     document.createElement('article')
@@ -277,6 +314,7 @@ const gain = context.createGain();
 const gainMin = gain.gain.minValue || 0;
 const gainMax = gain.gain.maxValue || 1;
 
+// Delay
 const delay = context.createDelay();
 const delayIn = context.createGain();
 const delayOut = context.createGain();
@@ -299,6 +337,16 @@ const maxWet = wet.gain.maxValue || 1;
 const minFeedback = feedback.gain.minValue || 0;
 const maxFeedback = feedback.gain.maxValue || 1;
 
+// Filter
+const filter = context.createBiquadFilter();
+
+const minCutoff = filter.frequency.minValue || 10;
+const maxCutoff = filter.frequency.maxValue || context.sampleRate / 2;
+const minQ = filter.Q.minValue || 0.0001;
+const maxQ = filter.Q.maxValue || 1000;
+const minGainFilter = filter.gain.minValue || -40;
+const maxGainFilter = filter.gain.maxValue || 40;
+
 // GainNode (Input) -> GainNode (Dry) -> GainNode (Output)
 delayIn.connect(dry);
 dry.connect(delayOut);
@@ -311,7 +359,9 @@ wet.connect(delayOut);
 delay.connect(feedback);
 feedback.connect(delay);
 
-source.connect(delayIn);
+// MediaElementAudioSourceNode (Input) -> BiquadFilterNode (Filter) -> Delay (Delay) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
+source.connect(filter);
+filter.connect(delayIn);
 delayOut.connect(gain);
 gain.connect(context.destination);
 
@@ -362,6 +412,19 @@ function updateControllers() {
     feedback.gain.value = feedbackRange.valueAsNumber;
     feedbackRangeValue.textContent = parseValueNum(feedbackRange);
   }
+
+  // Select Filte Type
+  filter.type = typeSelect.value;
+
+  // Control Cutoff
+  if (
+    cutoffRange.valueAsNumber >= minCutoff &&
+    cutoffRange.valueAsNumber <= maxCutoff
+  ) {
+    filter.frequency.value = cutoffRange.valueAsNumber;
+
+    cutoffRangeValue.textContent = parseValueNum(cutoffRange);
+  }
 }
 
 /* Events */
@@ -370,9 +433,19 @@ const eventWrap = new EventWrapper();
 // Audio Controller is visible ?
 audioToggleBox.addEventListener(eventWrap.click, updateControllers);
 
-[volumeRange, rateRange, delayRange, dryRange, wetRange, feedbackRange].forEach(
-  (slider) => slider.addEventListener('input', updateControllers)
-);
+typeSelect.addEventListener('change', updateControllers);
+
+[
+  volumeRange,
+  rateRange,
+  delayRange,
+  dryRange,
+  wetRange,
+  feedbackRange,
+  cutoffRange,
+  qualityRange,
+  gainfilterRange,
+].forEach((slider) => slider.addEventListener('input', updateControllers));
 
 playPauseButton.addEventListener(eventWrap.start, function () {
   //context.state === 'suspended' ? context.resume() : null;  // xxx: 読み込みでラグる

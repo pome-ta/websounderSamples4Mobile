@@ -35,18 +35,19 @@ const soundPath = './sounds/loop.wav';
 let isPlaying = 0;
 
 /* setup document node element */
+/* main controller */
 const labelValues = ['Play', 'Pause'];
 let playPauseButton;
 let volumeRangeValue, volumeRange;
 let playbackRateValue, rateRange;
 let audioToggleBox;
 let audio;
-
+/* DELAY controller */
 let delayRangeValue, delayRange;
 let dryRangeValue, dryRange;
 let wetRangeValue, wetRange;
 let feedbackRangeValue, feedbackRange;
-
+/* FILTER controller */
 const filterTypes = [
   'lowpass',
   'highpass',
@@ -422,7 +423,6 @@ function updateControllers() {
     cutoffRange.valueAsNumber <= maxCutoff
   ) {
     filter.frequency.value = cutoffRange.valueAsNumber;
-
     cutoffRangeValue.textContent = parseValueNum(cutoffRange);
   }
   // Control Q (Quality Factor)

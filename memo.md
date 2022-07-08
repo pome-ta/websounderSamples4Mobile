@@ -4,6 +4,9 @@
 - [] slider 構築を関数でまとめる
 
 
+global 的な変数が多すぎる？
+
+
 # 📝 2022/07/06
 
 [<audio>: 埋め込み音声要素 - HTML: HyperText Markup Language | MDN](https://developer.mozilla.org/ja/docs/Web/HTML/Element/audio)

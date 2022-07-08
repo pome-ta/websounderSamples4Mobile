@@ -134,16 +134,13 @@ const setupDOM = () => {
     audio.style.margin = 'auto';
     const audioSection = setAppendChild([audioWrap, [audio]], createSection());
 
-    return setAppendChild(
-      [
-        playPauseWrap,
-        volumeRangeSection,
-        playbackRateSection,
-        audioToggleSection,
-        audioSection,
-      ],
-      document.createElement('article')
-    );
+    return [
+      playPauseWrap,
+      volumeRangeSection,
+      playbackRateSection,
+      audioToggleSection,
+      audioSection,
+    ];
   };
 
   /* DELAY controller */
@@ -209,15 +206,12 @@ const setupDOM = () => {
       'FEEDBACK : '
     );
 
-    return setAppendChild(
-      [
-        delayRangeSection,
-        dryRangeSection,
-        wetRangeSection,
-        feedbackRangeSection,
-      ],
-      document.createElement('article')
-    );
+    return [
+      delayRangeSection,
+      dryRangeSection,
+      wetRangeSection,
+      feedbackRangeSection,
+    ];
   };
 
   /* FILTER controller */
@@ -237,12 +231,7 @@ const setupDOM = () => {
     );
 
     //CUTOFF
-    const cutoffRangeCaption = document.createTextNode('CUTOFF : ');
-    cutoffRateValue = document.createElement('span');
-    const cutoffUnitCaption = document.createTextNode(' Hz');
-    const cutoffRangeWrap = document.createElement('div');
-    cutoffRangeWrap.style.width = '88%';
-    cutoffRangeWrap.style.margin = 'auto';
+    let cutoffRangeSection;
     cutoffRange = createInputRange({
       id: 'range-cutoff',
       min: 20,
@@ -250,26 +239,27 @@ const setupDOM = () => {
       value: 350,
       numtype: 'int',
     });
-    const cutoffRangeSection = setAppendChild(
-      [
-        cutoffRangeCaption,
-        cutoffRateValue,
-        cutoffUnitCaption,
-        cutoffRangeWrap,
-        [cutoffRange],
-      ],
-      createSection()
+    [cutoffRangeSection, cutoffRateValue] = setupRangeToSectionInputValue(
+      cutoffRange,
+      'CUTOFF : ',
+      ' Hz'
     );
 
-    return setAppendChild(
-      [filterTypeSection, cutoffRangeSection],
-      document.createElement('article')
-    );
+    return [filterTypeSection, cutoffRangeSection];
   };
 
-  const mainControlView = setupMainController();
-  const delayControlView = setupDelayController();
-  const filterControlView = setupFilterController();
+  const mainControlView = setAppendChild(
+    setupMainController(),
+    document.createElement('article')
+  );
+  const delayControlView = setAppendChild(
+    setupDelayController(),
+    document.createElement('article')
+  );
+  const filterControlView = setAppendChild(
+    setupFilterController(),
+    document.createElement('article')
+  );
 
   [mainControlView, delayControlView, filterControlView].forEach((views) => {
     views.style.width = '92%';

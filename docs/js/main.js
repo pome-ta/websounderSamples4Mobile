@@ -17,28 +17,18 @@ function setupRangeToSectionInputValue(
 ) {
   const textNodeCaption = document.createTextNode(textCaptionStr);
   const inputValue = document.createElement('span');
-  /*
   const textNodeUnit =
     unitCaptionStr === null ? null : document.createTextNode(unitCaptionStr);
-*/
   const wrap = document.createElement('div');
   wrap.style.width = '88%';
   wrap.style.margin = 'auto';
-/*
-  const setArray = [textNodeCaption, inputValue, textNodeUnit, wrap, [inputElement]].filter(
-      (child) => child !== null
-    );*/
-  //console.log(setArray);
   const rangeSection = setAppendChild(
-  /*
     [textNodeCaption, inputValue, textNodeUnit, wrap, [inputElement]].filter(
       (child) => child !== null
-    )*/
-    [textNodeCaption, inputValue, wrap, [inputElement]],
+    ),
     createSection()
   );
-
-  return rangeSection, inputValue;
+  return [rangeSection, inputValue];
 }
 
 const soundPath = './sounds/loop.wav';
@@ -87,13 +77,7 @@ const setupDOM = () => {
     );
 
     // VOLUME
-    /*
-    const volumeRangeCaption = document.createTextNode('VOLUME : ');
-    volumeRangeValue = document.createElement('span');
-    const volumeRangeWrap = document.createElement('div');
-    volumeRangeWrap.style.width = '88%';
-    volumeRangeWrap.style.margin = 'auto';
-    */
+    let volumeRangeSection;
     volumeRange = createInputRange({
       id: 'range-volume',
       min: 0.0,
@@ -102,13 +86,10 @@ const setupDOM = () => {
       value: 1.0,
       numtype: 'float',
     });
-    /*
-    const volumeRangeSection = setAppendChild(
-      [volumeRangeCaption, volumeRangeValue, volumeRangeWrap, [volumeRange]],
-      createSection()
-    );*/
-    let volumeRangeSection;
-    volumeRangeSection, volumeRangeValue = [...setupRangeToSectionInputValue(volumeRange, 'VOLUME : ')];
+    [volumeRangeSection, volumeRangeValue] = setupRangeToSectionInputValue(
+      volumeRange,
+      'VOLUME : '
+    );
 
     // PLAYBACK RATE
     const playbackRateCaption = document.createTextNode('PLAYBACK RATE : ');
@@ -168,12 +149,7 @@ const setupDOM = () => {
   /* DELAY controller */
   const setupDelayController = () => {
     // DELAY
-    const delayRangeCaption = document.createTextNode('DELAY : ');
-    delayRangeValue = document.createElement('span');
-    const delayUnitCaption = document.createTextNode(' sec');
-    const delayRangeWrap = document.createElement('div');
-    delayRangeWrap.style.width = '88%';
-    delayRangeWrap.style.margin = 'auto';
+    let delayRangeSection;
     delayRange = createInputRange({
       id: 'range-delay-time',
       min: 0.0,
@@ -182,23 +158,14 @@ const setupDOM = () => {
       value: 0.0,
       numtype: 'float',
     });
-    const delayRangeSection = setAppendChild(
-      [
-        delayRangeCaption,
-        delayRangeValue,
-        delayUnitCaption,
-        delayRangeWrap,
-        [delayRange],
-      ],
-      createSection()
+    [delayRangeSection, delayRangeValue] = setupRangeToSectionInputValue(
+      delayRange,
+      'DELAY : ',
+      ' sec'
     );
 
     // DRY
-    const dryRangeCaption = document.createTextNode('DRY : ');
-    dryRangeValue = document.createElement('span');
-    const dryRangeWrap = document.createElement('div');
-    dryRangeWrap.style.width = '88%';
-    dryRangeWrap.style.margin = 'auto';
+    let dryRangeSection;
     dryRange = createInputRange({
       id: 'range-delay-dry',
       min: 0.0,
@@ -207,9 +174,9 @@ const setupDOM = () => {
       value: 1.0,
       numtype: 'float',
     });
-    const dryRangeSection = setAppendChild(
-      [dryRangeCaption, dryRangeValue, dryRangeWrap, [dryRange]],
-      createSection()
+    [dryRangeSection, dryRangeValue] = setupRangeToSectionInputValue(
+      dryRange,
+      'DRY : '
     );
 
     // WET

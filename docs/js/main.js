@@ -261,8 +261,8 @@ const setupDOM = () => {
     let gainfilterRangeSection;
     gainfilterRange = createInputRange({
       id: 'range-filter-gain',
-      min: 0,
-      max: 20,
+      min: -18,
+      max: 18,
       value: 1,
       numtype: 'int',
     });
@@ -415,7 +415,6 @@ function updateControllers() {
 
   // Select Filte Type
   filter.type = typeSelect.value;
-
   // Control Cutoff
   if (
     cutoffRange.valueAsNumber >= minCutoff &&
@@ -425,10 +424,30 @@ function updateControllers() {
 
     cutoffRangeValue.textContent = parseValueNum(cutoffRange);
   }
+  // Control Q (Quality Factor)
+  if (
+    qualityRange.valueAsNumber >= minQ &&
+    qualityRange.valueAsNumber <= maxQ
+  ) {
+    filter.Q.value = qualityRange.valueAsNumber;
+    qualityRangeValue.textContent = parseValueNum(qualityRange);
+  }
+  // Control Filter Gain
+  if (
+    gainfilterRange.valueAsNumber >= minGainFilter &&
+    gainfilterRange.valueAsNumber <= maxGainFilter
+  ) {
+    filter.gain.value = gainfilterRange.valueAsNumber;
+    gainfilterRangeValue.textContent = parseValueNum(gainfilterRange);
+  }
 }
 
 /* Events */
 const eventWrap = new EventWrapper();
+
+audio.addEventListener('ended', ()=>{
+console.log('end');
+});
 
 // Audio Controller is visible ?
 audioToggleBox.addEventListener(eventWrap.click, updateControllers);
@@ -454,6 +473,8 @@ playPauseButton.addEventListener(eventWrap.start, function () {
   isPlayFlag ? audio.play() : audio.pause();
   this.textContent = labelValues[isPlayFlag];
 });
+
+
 
 document.addEventListener('DOMContentLoaded', updateControllers);
 

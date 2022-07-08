@@ -18,7 +18,7 @@ function setupRangeToSectionInputValue(
   const textNodeCaption = document.createTextNode(textCaptionStr);
   const inputValue = document.createElement('span');
   const textNodeUnit =
-    unitCaptionStr === null ? null : document.createTextNode(unitCaptionStr);
+    unitCaptionStr !== null ? document.createTextNode(unitCaptionStr) : null;
   const wrap = document.createElement('div');
   wrap.style.width = '88%';
   wrap.style.margin = 'auto';
@@ -32,6 +32,7 @@ function setupRangeToSectionInputValue(
 }
 
 const soundPath = './sounds/loop.wav';
+let isPlaying = 0;
 
 /* setup document node element */
 const labelValues = ['Play', 'Pause'];
@@ -71,7 +72,7 @@ const setupDOM = () => {
   const setupMainController = () => {
     // START / PAUSE
     const captionPlayPause = document.createTextNode(labelValues.join(' / '));
-    playPauseButton = createButton('sound', labelValues[0]);
+    playPauseButton = createButton('sound', labelValues[isPlaying]);
     playPauseButton.style.width = '100%';
     const playPauseWrap = setAppendChild(
       [captionPlayPause, playPauseButton],
@@ -445,8 +446,17 @@ function updateControllers() {
 /* Events */
 const eventWrap = new EventWrapper();
 
-audio.addEventListener('ended', ()=>{
-console.log('end');
+audio.addEventListener('playing', () => {
+  isPlaying = 1;
+  playPauseButton.textContent = labelValues[isPlaying];
+});
+audio.addEventListener('pause', () => {
+  isPlaying = 0;
+  playPauseButton.textContent = labelValues[isPlaying];
+});
+audio.addEventListener('ended', () => {
+  isPlaying = 0;
+  playPauseButton.textContent = labelValues[isPlaying];
 });
 
 // Audio Controller is visible ?
@@ -467,14 +477,10 @@ typeSelect.addEventListener('change', updateControllers);
 ].forEach((slider) => slider.addEventListener('input', updateControllers));
 
 playPauseButton.addEventListener(eventWrap.start, function () {
-  //context.state === 'suspended' ? context.resume() : null;  // xxx: 読み込みでラグる
-  // xxx: ビット排他的理論和処理。無駄に
-  const isPlayFlag = labelValues.indexOf(this.textContent) ^ 1;
-  isPlayFlag ? audio.play() : audio.pause();
-  this.textContent = labelValues[isPlayFlag];
+  isPlaying = isPlaying ^ 1;
+  isPlaying ? audio.play() : audio.pause();
+  this.textContent = labelValues[isPlaying];
 });
-
-
 
 document.addEventListener('DOMContentLoaded', updateControllers);
 
@@ -484,3 +490,4 @@ function initAudioContext() {
   context.resume();
 }
 document.addEventListener(eventWrap.start, initAudioContext);
+

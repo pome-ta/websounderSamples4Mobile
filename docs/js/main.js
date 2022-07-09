@@ -21,15 +21,12 @@ setupDOM();
 /*
  * Audio
  */
- 
 
 async function loadSample(actx, uri) {
   const res = await fetch(uri);
   const arraybuf = await res.arrayBuffer();
   return actx.decodeAudioData(arraybuf);
 }
-
-
 
 const rootPath = './sounds/toneOneshot/';
 const tones = ['c4', 'd4', 'e4', 'f4', 'g4', 'a4', 'b4', 'c5'];
@@ -44,14 +41,15 @@ const sources = new Array(urls.length);
 const load = async (url, index) => {
   buffers[index] = await loadSample(context, url);
 };
-/*
+
 document.addEventListener('DOMContentLoaded', async () => {
   for (let i = 0, len = urls.length; i < len; i++) {
     await load(urls[i], i);
+  }
 });
-*/
+
 document.addEventListener('DOMContentLoaded', () => {
-  console.log(buffers);
+  const _ = 1;
 });
 
 /*

@@ -33,6 +33,7 @@ const tones = ['c4', 'd4', 'e4', 'f4', 'g4', 'a4', 'b4', 'c5'];
 const urls = tones.map((tone) => `${rootPath}${tone}.wav`);
 
 const context = new AudioContext();
+const gain = context.createGain();
 // for the instances of AudioBuffer
 const buffers = new Array(urls.length);
 // for the instances of AudioBufferSourceNode
@@ -45,6 +46,19 @@ const load = async (url, index) => {
 document.addEventListener('DOMContentLoaded', async () => {
   for (let i = 0, len = urls.length; i < len; i++) {
     await load(urls[i], i);
+  }
+  // Get base time
+  const t0 = context.currentTime;
+  for (var i = 0, len = buffers.length; i < len; i++) {
+    // Create the instance of AudioBufferSourceNode
+    sources[i] = context.createBufferSource();
+    // Set the instance of AudioBuffer
+    sources[i].buffer = buffers[i];
+    // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
+    sources[i].connect(gain);
+    gain.connect(context.destination);
+    sources[i].start(t0 + i, 0, sources[i].buffer.duration);
+    sources[i].stop(t0 + i + sources[i].buffer.duration);
   }
 });
 

@@ -10,9 +10,6 @@ import {
 
 import { EventWrapper } from './EventWrapper.js';
 
-const soundPath = './sounds/loop.wav';
-
-
 /* setup document node element */
 
 const setupDOM = () => {
@@ -24,14 +21,16 @@ setupDOM();
 /*
  * Audio
  */
-const context = new AudioContext();
+const rootPath = './sounds/toneOneshot/';
+const tones = ['c4', 'd4', 'e4', 'f4', 'g4', 'a4', 'b4', 'c5'];
+const urls = tones.map((tone) => `${rootPath}${tone}.wav`);
 
+const context = new AudioContext();
 
 /*
  * Events
  */
 const eventWrap = new EventWrapper();
-
 
 // todo: wake up AudioContext
 function initAudioContext() {

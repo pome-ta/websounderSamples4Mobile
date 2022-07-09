@@ -16,7 +16,14 @@ for (const [index, url] of urls.entries()) {
 
 `.forEach` や`.map` 処理に`await` 処理が入ると面倒なためfor 文にしてる
 
+## `currentTime` は、buffer 処理終えてから？
 
+for 内で、`await` してるから逐次処理でOK ぽい？
+
+エラー処理をしてないのもあるけど、、、
+
+
+[BaseAudioContext.currentTime - Web API | MDN](https://developer.mozilla.org/ja/docs/Web/API/BaseAudioContext/currentTime)
 
 [[小ネタ]forEachではasync/awaitが使えない | DevelopersIO](https://dev.classmethod.jp/articles/foreach-async-await/)
 

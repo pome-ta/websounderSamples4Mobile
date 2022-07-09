@@ -42,14 +42,28 @@ const load = async (url, index) => {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+  /*  todo: 呼び出し予備
   for (const [index, url] of urls.entries()) {
     await load(url, index);
   }
   // Get base time
   const t0 = context.currentTime;
+  console.log(t0);
   for (const [index, buffer] of buffers.entries()) {
     const source = (sources[index] = context.createBufferSource());
     source.buffer = buffer;
+    // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
+    source.connect(gain);
+    gain.connect(context.destination);
+    source.start(t0 + index, 0, source.buffer.duration);
+    source.stop(t0 + index + source.buffer.duration);
+  }
+  */
+  const t0 = context.currentTime;
+  for (const [index, url] of urls.entries()) {
+    await load(url, index);
+    const source = (sources[index] = context.createBufferSource());
+    source.buffer = buffers[index];
     // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
     source.connect(gain);
     gain.connect(context.destination);

@@ -1,3 +1,25 @@
+# 📝 2022/07/10
+
+for の形式を整備
+
+``` .js
+for (let i = 0, len = urls.length; i < len; i++) {
+  await load(urls[i], i);
+}
+```
+
+``` .js
+for (const [index, url] of urls.entries()) {
+  await load(url, index);
+}
+```
+
+`.forEach` や`.map` 処理に`await` 処理が入ると面倒なためfor 文にしてる
+
+
+
+[[小ネタ]forEachではasync/awaitが使えない | DevelopersIO](https://dev.classmethod.jp/articles/foreach-async-await/)
+
 # 📝 2022/07/08
 
 - [] slider 構築を関数でまとめる

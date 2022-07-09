@@ -34,9 +34,8 @@ const urls = tones.map((tone) => `${rootPath}${tone}.wav`);
 
 const context = new AudioContext();
 const gain = context.createGain();
-// for the instances of AudioBuffer
+
 const buffers = new Array(urls.length);
-// for the instances of AudioBufferSourceNode
 const sources = new Array(urls.length);
 
 const load = async (url, index) => {
@@ -50,9 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Get base time
   const t0 = context.currentTime;
   for (var i = 0, len = buffers.length; i < len; i++) {
-    // Create the instance of AudioBufferSourceNode
     sources[i] = context.createBufferSource();
-    // Set the instance of AudioBuffer
     sources[i].buffer = buffers[i];
     // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
     sources[i].connect(gain);

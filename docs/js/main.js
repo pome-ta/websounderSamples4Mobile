@@ -13,41 +13,39 @@ import { EventWrapper } from './EventWrapper.js';
 /* setup document node element */
 let currentTimeValue;
 
-
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent =
     'サウンドスケジューリング | オーディオデータの再生';
   mainTitleHeader.style.fontSize = '0.8rem';
-  
+
   /* main controller */
   const setupMainController = () => {
     // currentTime
-    const captionCurrentTime = document.createTextNode('AudioContext currentTimeプロパティ');
+    const captionCurrentTime = document.createTextNode(
+      'AudioContext currentTimeプロパティ'
+    );
     currentTimeValue = document.createElement('p');
     const currentTimeSection = setAppendChild(
       [captionCurrentTime, currentTimeValue],
       createSection()
     );
     return [currentTimeSection];
-  }
+  };
   /* article setting */
-  
+
   const mainControlView = setAppendChild(
     setupMainController(),
     document.createElement('article')
   );
-  
-  [mainControlView, ].forEach((views) => {
+
+  [mainControlView].forEach((views) => {
     views.style.width = '92%';
     views.style.margin = '1rem auto';
   });
-  
+
   // overAll DOM setup
-  setAppendChild([
-    mainTitleHeader,
-    mainControlView,
-  ]);
+  setAppendChild([mainTitleHeader, mainControlView]);
 };
 
 setupDOM();
@@ -107,8 +105,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  const _ = 1;
+  updateCurrentTime();
 });
+
+/*
+ * Animation
+ */
+
+let prevCurrentTime;
+function updateCurrentTime() {
+  //let currentTime = Math.round(context.currentTime * 100) / 100;
+  requestAnimationFrame(updateCurrentTime);
+  let currentTime = context.currentTime;
+  if (currentTime !== prevCurrentTime) {
+    currentTimeValue.textContent = currentTime;
+  }
+  prevCurrentTime = currentTime;
+}
 
 /*
  * Events

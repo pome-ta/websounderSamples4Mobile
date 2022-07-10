@@ -11,9 +11,43 @@ import {
 import { EventWrapper } from './EventWrapper.js';
 
 /* setup document node element */
+let currentTimeValue;
+
 
 const setupDOM = () => {
-  const _ = 1;
+  const mainTitleHeader = document.createElement('h1');
+  mainTitleHeader.textContent =
+    'サウンドスケジューリング | オーディオデータの再生';
+  mainTitleHeader.style.fontSize = '0.8rem';
+  
+  /* main controller */
+  const setupMainController = () => {
+    // currentTime
+    const captionCurrentTime = document.createTextNode('AudioContext currentTimeプロパティ');
+    currentTimeValue = document.createElement('p');
+    const currentTimeSection = setAppendChild(
+      [captionCurrentTime, currentTimeValue],
+      createSection()
+    );
+    return [currentTimeSection];
+  }
+  /* article setting */
+  
+  const mainControlView = setAppendChild(
+    setupMainController(),
+    document.createElement('article')
+  );
+  
+  [mainControlView, ].forEach((views) => {
+    views.style.width = '92%';
+    views.style.margin = '1rem auto';
+  });
+  
+  // overAll DOM setup
+  setAppendChild([
+    mainTitleHeader,
+    mainControlView,
+  ]);
 };
 
 setupDOM();

@@ -31,12 +31,12 @@ function setupRangeToSectionInputValue(
   return [rangeSection, inputValue];
 }
 
-
 /* setup document node element */
 let currentTimeValue;
 let startButton;
 let volumeRangeValue, volumeRange;
 let playbackRateValue, rateRange;
+let intervalRangeValue, intervalRange;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -65,7 +65,7 @@ const setupDOM = () => {
       [captionStart, startButton],
       createSection()
     );
-    
+
     // VOLUME
     let volumeRangeSection;
     volumeRange = createInputRange({
@@ -80,7 +80,7 @@ const setupDOM = () => {
       volumeRange,
       'VOLUME : '
     );
-    
+
     // PLAYBACK RATE
     let playbackRateSection;
     rateRange = createInputRange({
@@ -95,11 +95,32 @@ const setupDOM = () => {
       rateRange,
       'PLAYBACK RATE : '
     );
-    
 
-    return [currentTimeSection, startButtonSection, volumeRangeSection, playbackRateSection];
+    // INTERVAL
+    let intervalRangeSection;
+    intervalRange = createInputRange({
+      id: 'range-interval',
+      min: 0.0,
+      max: 1.0,
+      step: 0.01,
+      value: 1.0,
+      numtype: 'float',
+    });
+    [intervalRangeSection, intervalRangeValue] = setupRangeToSectionInputValue(
+      intervalRange,
+      'INTERVAL : ',
+      ' sec'
+    );
+
+    return [
+      currentTimeSection,
+      startButtonSection,
+      volumeRangeSection,
+      playbackRateSection,
+      intervalRangeSection,
+    ];
   };
-  
+
   /* article setting */
   const mainControlView = setAppendChild(
     setupMainController(),
@@ -139,22 +160,6 @@ const gainMax = gain.gain.maxValue || 1;
 const buffers = new Array(urls.length);
 const sources = new Array(urls.length);
 
-let interval;
-
-function updateControllers() {
-  // xxx: 複数同時に、再描画されるから無駄が多い？
-  // Control Master Volume
-  if (
-    volumeRange.valueAsNumber >= gainMin &&
-    volumeRange.valueAsNumber <= gainMax
-  ) {
-    gain.gain.value = volumeRange.valueAsNumber;
-    volumeRangeValue.textContent = parseValueNum(volumeRange);
-  }
-  // Control playbackRate
-  playbackRateValue.textContent = parseValueNum(rateRange);
-}
-
 const load = async (url, index) => {
   buffers[index] = await loadSample(context, url);
 };
@@ -192,27 +197,51 @@ function updateCurrentTime(timestamp) {
  */
 const eventWrap = new EventWrapper();
 
+function updateControllers() {
+  // xxx: 複数同時に、再描画されるから無駄が多い？
+  // Control Master Volume
+  if (
+    volumeRange.valueAsNumber >= gainMin &&
+    volumeRange.valueAsNumber <= gainMax
+  ) {
+    gain.gain.value = volumeRange.valueAsNumber;
+    volumeRangeValue.textContent = parseValueNum(volumeRange);
+  }
+  // Control playbackRate
+  playbackRateValue.textContent = parseValueNum(rateRange);
 
+  // Control interval
+  intervalRangeValue.textContent = parseValueNum(intervalRange);
+}
 
 startButton.addEventListener(eventWrap.click, () => {
   const t0 = context.currentTime;
+  const interval = intervalRange.valueAsNumber;
   buffers.forEach((buffer, index) => {
     const source = (sources[index] = context.createBufferSource());
     source.buffer = buffer;
-    source.playbackRate.value = rateRange.valueAsNumber;
+
+    const playbackRate = rateRange.valueAsNumber;
+    source.playbackRate.value = playbackRate;
+
     // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
     source.connect(gain);
     gain.connect(context.destination);
-    source.start(t0 + index, 0, source.buffer.duration);
-    source.stop(t0 + index + source.buffer.duration);
+
+    const intervalIndex = interval * index;
+    const durationPlaybackRate = source.buffer.duration / playbackRate;
+
+    const startTime = [t0 + intervalIndex, 0, durationPlaybackRate];
+    const stopTime = t0 + intervalIndex + durationPlaybackRate;
+
+    source.start(...startTime);
+    source.stop(stopTime);
   });
 });
 
-[
-  volumeRange,
-  rateRange,
-].forEach((slider) => slider.addEventListener('input', updateControllers));
-
+[volumeRange, rateRange, intervalRange].forEach((slider) =>
+  slider.addEventListener('input', updateControllers)
+);
 
 // todo: wake up AudioContext
 function initAudioContext() {

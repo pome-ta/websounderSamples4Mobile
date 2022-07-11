@@ -1,3 +1,14 @@
+# 📝 2022/07/11
+
+
+## いつもググるやつ
+
+[ヨーダ記法とは｜定数を左辺に記述するメリットと流行らない理由 | MaryCore](https://marycore.jp/coding/yoda-conditions/)
+
+
+[Array.prototype.forEach() - JavaScript | MDN](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)
+
+
 # 📝 2022/07/10
 
 ## for の形式を整備

@@ -14,7 +14,6 @@ import { EventWrapper } from './EventWrapper.js';
 let currentTimeValue;
 let startButton;
 
-
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent =
@@ -33,7 +32,7 @@ const setupDOM = () => {
       [captionCurrentTime, currentTimeValue],
       createSection()
     );
-    
+
     // START
     const captionStart = document.createTextNode('START');
     startButton = createButton('start', '▶︎');
@@ -42,8 +41,7 @@ const setupDOM = () => {
       [captionStart, startButton],
       createSection()
     );
-    
-    
+
     return [currentTimeSection, startButtonSection];
   };
   /* article setting */
@@ -87,42 +85,6 @@ const load = async (url, index) => {
   buffers[index] = await loadSample(context, url);
 };
 
-
-
-/*
-document.addEventListener('DOMContentLoaded', async () => {
-  //  todo: 呼び出し予備
-  for (const [index, url] of urls.entries()) {
-    await load(url, index);
-  }
-  // Get base time
-  const t0 = context.currentTime;
-  console.log(t0);
-  for (const [index, buffer] of buffers.entries()) {
-    const source = (sources[index] = context.createBufferSource());
-    source.buffer = buffer;
-    // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
-    source.connect(gain);
-    gain.connect(context.destination);
-    source.start(t0 + index, 0, source.buffer.duration);
-    source.stop(t0 + index + source.buffer.duration);
-  }
-  
-  const t0 = context.currentTime;
-  currentTimeValue.textContent = t0;
-  for (const [index, url] of urls.entries()) {
-    await load(url, index);
-    const source = (sources[index] = context.createBufferSource());
-    source.buffer = buffers[index];
-    // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
-    source.connect(gain);
-    gain.connect(context.destination);
-    source.start(t0 + index, 0, source.buffer.duration);
-    source.stop(t0 + index + source.buffer.duration);
-  }
-});
-*/
-
 document.addEventListener('DOMContentLoaded', async () => {
   for (const [index, url] of urls.entries()) {
     await load(url, index);
@@ -142,7 +104,6 @@ const frameTime = 1 / FPS;
 let prevTimestamp = 0;
 
 function updateCurrentTime(timestamp) {
-  //console.log(timestamp);
   const elapsed = (timestamp - prevTimestamp) / 1000;
   if (elapsed >= frameTime) {
     prevTimestamp = timestamp;
@@ -156,10 +117,9 @@ function updateCurrentTime(timestamp) {
  */
 const eventWrap = new EventWrapper();
 
-
 startButton.addEventListener(eventWrap.click, () => {
   const t0 = context.currentTime;
-  for (const [index, buffer] of buffers.entries()) {
+  buffers.forEach((buffer, index) => {
     const source = (sources[index] = context.createBufferSource());
     source.buffer = buffer;
     // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
@@ -167,7 +127,8 @@ startButton.addEventListener(eventWrap.click, () => {
     gain.connect(context.destination);
     source.start(t0 + index, 0, source.buffer.duration);
     source.stop(t0 + index + source.buffer.duration);
-  }
+  });
+  
 });
 
 // todo: wake up AudioContext

@@ -111,16 +111,25 @@ document.addEventListener('DOMContentLoaded', () => {
 /*
  * Animation
  */
-
+const FPS = 1;
+const frameTime = 1 / FPS;
+let prevTimestamp = 0;
 let prevCurrentTime;
-function updateCurrentTime() {
+function updateCurrentTime(timestamp) {
+  const elapsed = (timestamp - prevTimestamp) / 1000;
+  if (elapsed <= frameTime) {
+    requestAnimationFrame(updateCurrentTime);
+    return;
+  }
+  prevTimestamp = timestamp;
   //let currentTime = Math.round(context.currentTime * 100) / 100;
-  requestAnimationFrame(updateCurrentTime);
-  let currentTime = context.currentTime;
+  
+  const currentTime = context.currentTime;
   if (currentTime !== prevCurrentTime) {
     currentTimeValue.textContent = currentTime;
   }
   prevCurrentTime = currentTime;
+  requestAnimationFrame(updateCurrentTime);
 }
 
 /*

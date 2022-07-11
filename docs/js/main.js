@@ -10,9 +10,33 @@ import {
 
 import { EventWrapper } from './EventWrapper.js';
 
+function setupRangeToSectionInputValue(
+  inputElement,
+  textCaptionStr,
+  unitCaptionStr = null
+) {
+  const textNodeCaption = document.createTextNode(textCaptionStr);
+  const inputValue = document.createElement('span');
+  const textNodeUnit =
+    unitCaptionStr !== null ? document.createTextNode(unitCaptionStr) : null;
+  const wrap = document.createElement('div');
+  wrap.style.width = '88%';
+  wrap.style.margin = 'auto';
+  const rangeSection = setAppendChild(
+    [textNodeCaption, inputValue, textNodeUnit, wrap, [inputElement]].filter(
+      (child) => child !== null
+    ),
+    createSection()
+  );
+  return [rangeSection, inputValue];
+}
+
+
 /* setup document node element */
 let currentTimeValue;
 let startButton;
+let volumeRangeValue, volumeRange;
+let playbackRateValue, rateRange;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
@@ -41,11 +65,42 @@ const setupDOM = () => {
       [captionStart, startButton],
       createSection()
     );
+    
+    // VOLUME
+    let volumeRangeSection;
+    volumeRange = createInputRange({
+      id: 'range-volume',
+      min: 0.0,
+      max: 1.0,
+      step: 0.05,
+      value: 1.0,
+      numtype: 'float',
+    });
+    [volumeRangeSection, volumeRangeValue] = setupRangeToSectionInputValue(
+      volumeRange,
+      'VOLUME : '
+    );
+    
+    // PLAYBACK RATE
+    let playbackRateSection;
+    rateRange = createInputRange({
+      id: 'range-playback-rate',
+      min: 0.05,
+      max: 2.0,
+      step: 0.05,
+      value: 1.0,
+      numtype: 'float',
+    });
+    [playbackRateSection, playbackRateValue] = setupRangeToSectionInputValue(
+      rateRange,
+      'PLAYBACK RATE : '
+    );
+    
 
-    return [currentTimeSection, startButtonSection];
+    return [currentTimeSection, startButtonSection, volumeRangeSection, playbackRateSection];
   };
+  
   /* article setting */
-
   const mainControlView = setAppendChild(
     setupMainController(),
     document.createElement('article')
@@ -78,8 +133,27 @@ const urls = tones.map((tone) => `${rootPath}${tone}.wav`);
 
 const context = new AudioContext();
 const gain = context.createGain();
+const gainMin = gain.gain.minValue || 0;
+const gainMax = gain.gain.maxValue || 1;
+
 const buffers = new Array(urls.length);
 const sources = new Array(urls.length);
+
+let interval;
+
+function updateControllers() {
+  // xxx: 複数同時に、再描画されるから無駄が多い？
+  // Control Master Volume
+  if (
+    volumeRange.valueAsNumber >= gainMin &&
+    volumeRange.valueAsNumber <= gainMax
+  ) {
+    gain.gain.value = volumeRange.valueAsNumber;
+    volumeRangeValue.textContent = parseValueNum(volumeRange);
+  }
+  // Control playbackRate
+  playbackRateValue.textContent = parseValueNum(rateRange);
+}
 
 const load = async (url, index) => {
   buffers[index] = await loadSample(context, url);
@@ -94,6 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.addEventListener('DOMContentLoaded', () => {
   currentTimeValue.textContent = context.currentTime;
   updateCurrentTime();
+  updateControllers();
 });
 
 /*
@@ -117,19 +192,27 @@ function updateCurrentTime(timestamp) {
  */
 const eventWrap = new EventWrapper();
 
+
+
 startButton.addEventListener(eventWrap.click, () => {
   const t0 = context.currentTime;
   buffers.forEach((buffer, index) => {
     const source = (sources[index] = context.createBufferSource());
     source.buffer = buffer;
+    source.playbackRate.value = rateRange.valueAsNumber;
     // AudioBufferSourceNode (Input) -> GainNode (Master Volume) -> AudioDestinationNode (Output)
     source.connect(gain);
     gain.connect(context.destination);
     source.start(t0 + index, 0, source.buffer.duration);
     source.stop(t0 + index + source.buffer.duration);
   });
-  
 });
+
+[
+  volumeRange,
+  rateRange,
+].forEach((slider) => slider.addEventListener('input', updateControllers));
+
 
 // todo: wake up AudioContext
 function initAudioContext() {

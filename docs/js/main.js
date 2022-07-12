@@ -151,10 +151,44 @@ setupDOM();
 const context = new AudioContext();
 
 // Create the instance of OscillatorNode
-let oscillator;
+let oscillator = context.createOscillator();
+const frequencyMin = oscillator.frequency.minValue || 0;
+const frequencyMax = oscillator.frequency.maxValue || 100000;
+const detuneMin = oscillator.detune.minValue || -4800;
+const detuneMax = oscillator.detune.maxValue || 4800;
 
 // Create the instance of GainNode
 const gain = context.createGain();
+const gainMin = gain.gain.minValue || 0;
+const gainMax = gain.gain.maxValue || 1;
+
+function updateControllers() {
+  // xxx: 複数同時に、再描画・処理されるから無駄が多い？
+  oscillator.type = typeSelect.value;
+
+  if (
+    volumeRange.valueAsNumber >= gainMin &&
+    volumeRange.valueAsNumber <= gainMax
+  ) {
+    gain.gain.value = volumeRange.valueAsNumber;
+    volumeRangeValue.textContent = parseValueNum(volumeRange);
+  }
+
+  if (
+    frequencyRange.valueAsNumber >= frequencyMin &&
+    frequencyRange.valueAsNumber <= frequencyMax
+  ) {
+    oscillator.frequency.value = frequencyRange.valueAsNumber;
+    frequencyRangeValue.textContent = parseValueNum(frequencyRange);
+  }
+  if (
+    detuneRange.valueAsNumber >= detuneMin &&
+    detuneRange.valueAsNumber <= detuneMax
+  ) {
+    oscillator.detune.value = detuneRange.valueAsNumber;
+    detuneRangeValue.textContent = parseValueNum(detuneRange);
+  }
+}
 
 /*
  * Events
@@ -165,14 +199,23 @@ playPauseButton.addEventListener(eventWrap.start, () => {
   isPlaying = isPlaying ^ 1;
   if (isPlaying) {
     oscillator = context.createOscillator();
-    oscillator.connect(gain);
-    gain.connect(context.destination);
+    oscillator.connect(gain).connect(context.destination);
+    //gain.connect(context.destination);
+    updateControllers();
     oscillator.start(0);
   } else {
     oscillator.stop(0);
   }
   playPauseButton.textContent = switchPlayPause[isPlaying];
 });
+
+typeSelect.addEventListener('change', updateControllers);
+
+[volumeRange, frequencyRange, detuneRange].forEach((slider) =>
+  slider.addEventListener('input', updateControllers)
+);
+
+document.addEventListener('DOMContentLoaded', updateControllers);
 
 // todo: wake up AudioContext
 function initAudioContext() {

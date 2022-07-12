@@ -150,10 +150,29 @@ setupDOM();
 
 const context = new AudioContext();
 
+// Create the instance of OscillatorNode
+let oscillator;
+
+// Create the instance of GainNode
+const gain = context.createGain();
+
 /*
  * Events
  */
 const eventWrap = new EventWrapper();
+
+playPauseButton.addEventListener(eventWrap.start, () => {
+  isPlaying = isPlaying ^ 1;
+  if (isPlaying) {
+    oscillator = context.createOscillator();
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(0);
+  } else {
+    oscillator.stop(0);
+  }
+  playPauseButton.textContent = switchPlayPause[isPlaying];
+});
 
 // todo: wake up AudioContext
 function initAudioContext() {

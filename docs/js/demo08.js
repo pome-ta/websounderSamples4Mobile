@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /*
  * Animation
  */
-const FPS = 8;
+const FPS = 30;
 const frameTime = 1 / FPS;
 let prevTimestamp = 0;
 

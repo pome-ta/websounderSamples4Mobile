@@ -31,24 +31,29 @@ function setupRangeToSectionInputValue(
   return [rangeSection, inputValue];
 }
 
-
 let isPlaying = 0;
 
 /* setup document node element */
 const switchPlayPause = ['Play', 'Pause'];
+const waveTypes = ['sine', 'square', 'sawtooth', 'triangle'];
 let playPauseButton;
 let volumeRangeValue, volumeRange;
+let typeSelect;
+let frequencyRangeValue, frequencyRange;
+let detuneRangeValue, detuneRange;
 
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent = 'OscillatorNode | サウンドの生成';
-  mainTitleHeader.style.fontSize = '0.8rem';
+  mainTitleHeader.style.fontSize = '1rem';
 
   /* main controller */
   const setupMainController = () => {
     // START / PAUSE
     let playPauseSection;
-    const captionPlayPause = document.createTextNode(switchPlayPause.join(' / '));
+    const captionPlayPause = document.createTextNode(
+      switchPlayPause.join(' / ')
+    );
     playPauseButton = createButton('sound', switchPlayPause[isPlaying]);
     playPauseButton.style.width = '100%';
     playPauseSection = setAppendChild(
@@ -71,9 +76,54 @@ const setupDOM = () => {
       'VOLUME : '
     );
 
+    // WAVE TYPE
+    let waveTypeSection;
+    const waveTypeCaption = document.createTextNode('WAVE TYPE');
+    const waveTypeWrap = document.createElement('div');
+    waveTypeWrap.style.width = '88%';
+    waveTypeWrap.style.margin = 'auto';
+    typeSelect = createSelectOpitons({
+      id: 'form-wave-type',
+      options: waveTypes,
+    });
+    waveTypeSection = setAppendChild(
+      [waveTypeCaption, waveTypeWrap, [typeSelect]],
+      createSection()
+    );
+
+    // FREQUENCY
+    let frequencyRangeSection;
+    frequencyRange = createInputRange({
+      id: 'range-frequency',
+      min: 20,
+      max: 8000,
+      value: 440,
+      numtype: 'int',
+    });
+    [frequencyRangeSection, frequencyRangeValue] =
+      setupRangeToSectionInputValue(frequencyRange, 'FREQUENCY : ', ' Hz');
+
+    // DETUNE
+    let detuneRangeSection;
+    detuneRange = createInputRange({
+      id: 'range-detune',
+      min: -100,
+      max: 100,
+      value: 0,
+      numtype: 'int',
+    });
+    [detuneRangeSection, detuneRangeValue] = setupRangeToSectionInputValue(
+      detuneRange,
+      'DETUNE : ',
+      ' cent'
+    );
+
     return [
       playPauseSection,
       volumeRangeSection,
+      waveTypeSection,
+      frequencyRangeSection,
+      detuneRangeSection,
     ];
   };
 
@@ -99,7 +149,6 @@ setupDOM();
  */
 
 const context = new AudioContext();
-
 
 /*
  * Events

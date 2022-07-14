@@ -4,48 +4,43 @@
 
 `demo10.js` を`radio` じゃなくて`select` にしちゃった、、、
 
-
 まぁ、次重そうだし、ええか
 
 # 📝 2022/07/11
-
 
 ## いつもググるやつ
 
 [ヨーダ記法とは｜定数を左辺に記述するメリットと流行らない理由 | MaryCore](https://marycore.jp/coding/yoda-conditions/)
 
-
 [Array.prototype.forEach() - JavaScript | MDN](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)
-
 
 # 📝 2022/07/10
 
 ## for の形式を整備
 
-``` .js
+```.js
 for (let i = 0, len = urls.length; i < len; i++) {
   await load(urls[i], i);
 }
 ```
 
-``` .js
+```.js
 for (const [index, url] of urls.entries()) {
   await load(url, index);
 }
 ```
 
-`.forEach` や`.map` 処理に`await` 処理が入ると面倒なためfor 文にしてる
+`.forEach` や`.map` 処理に`await` 処理が入ると面倒なため for 文にしてる
 
 ## `currentTime` は、buffer 処理終えてから？
 
-for 内で、`await` してるから逐次処理でOK ぽい？
+for 内で、`await` してるから逐次処理で OK ぽい？
 
 エラー処理をしてないのもあるけど、、、
 
-
 [BaseAudioContext.currentTime - Web API | MDN](https://developer.mozilla.org/ja/docs/Web/API/BaseAudioContext/currentTime)
 
-[[小ネタ]forEachではasync/awaitが使えない | DevelopersIO](https://dev.classmethod.jp/articles/foreach-async-await/)
+[[小ネタ]forEach では async/await が使えない | DevelopersIO](https://dev.classmethod.jp/articles/foreach-async-await/)
 
 # 📝 2022/07/08
 

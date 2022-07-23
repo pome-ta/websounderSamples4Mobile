@@ -1,3 +1,12 @@
+# 📝 2022/07/24
+
+[pome-ta/jsPianoKeyboard4Mobile](https://github.com/pome-ta/jsPianoKeyboard4Mobile)
+
+途中ではあるが、キーボードの自作モジュールを追加
+
+一部ここでも、調整予定ではあるが、上記リポジトリでも追記する予定
+
+
 # 📝 2022/07/12
 
 ## 選択方法

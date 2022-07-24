@@ -7,7 +7,7 @@ import {
   createSection,
   setAppendChild,
 } from './customDOMfuncs.js';
-
+import { MiniKey } from './miniKey.js';
 import { EventWrapper } from './EventWrapper.js';
 
 function setupRangeToSectionInputValue(
@@ -125,6 +125,21 @@ const setupDOM = () => {
       frequencyRangeSection,
       detuneRangeSection,
     ];
+  };
+
+  /* keyboard controller */
+  const setupKeyboardController = () => {
+    const synth = document.createElement('div');
+    const keyboardDiv = document.createElement('div');
+    synth.appendChild(keyboardDiv);
+    const keyboardWidth = synth.clientWidth;
+    const keyboardSettings = {
+      width: `${keyboardWidth}`,
+      height: 176,
+      start: start,
+      keyOctave: oct,
+    };
+    const miniKeyboard = new MiniKey(keyboardDiv, miniSettings);
   };
 
   /* article setting */

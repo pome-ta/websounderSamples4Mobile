@@ -7,8 +7,11 @@ import {
   createSection,
   setAppendChild,
 } from './customDOMfuncs.js';
+
 import { MiniKey } from './miniKey.js';
+
 import { EventWrapper } from './EventWrapper.js';
+
 
 function setupRangeToSectionInputValue(
   inputElement,

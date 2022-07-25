@@ -133,15 +133,16 @@ const setupDOM = () => {
   const setupKeyboardController = () => {
     const synth = document.createElement('div');
     const keyboardDiv = document.createElement('div');
-    synth.appendChild(keyboardDiv);
+    //synth.appendChild(keyboardDiv);
     const keyboardWidth = synth.clientWidth;
     const keyboardSettings = {
       width: `${keyboardWidth}`,
       height: 176,
-      start: start,
-      keyOctave: oct,
+      start: 'A3',
+      keyOctave: 2,
     };
-    const miniKeyboard = new MiniKey(keyboardDiv, miniSettings);
+    const miniKeyboard = new MiniKey(keyboardDiv, keyboardSettings);
+    return [synth]
   };
 
   /* article setting */
@@ -149,8 +150,13 @@ const setupDOM = () => {
     setupMainController(),
     document.createElement('article')
   );
+  
+  const keyboardControlView = setAppendChild(
+    setupKeyboardController(),
+    document.createElement('article')
+  );
 
-  [mainControlView].forEach((views) => {
+  [mainControlView, keyboardControlView].forEach((views) => {
     views.style.width = '92%';
     views.style.margin = '1rem auto';
   });

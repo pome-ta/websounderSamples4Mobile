@@ -134,7 +134,6 @@ export class MiniKey {
           noteIndex: noteIndex,
         });
       }
-      // return [whiteKey.el, blackKey ? blackKey.el : null].filter((el) => el);
       return [whiteKey, blackKey ? blackKey : null].filter((key) => key);
     });
 

@@ -160,13 +160,15 @@ const setupDOM = () => {
     views.style.width = '92%';
     views.style.margin = '1rem auto';
   });
+  console.log(mainControlView.clientWidth)
 
   // overAll DOM setup
   setAppendChild([mainTitleHeader, mainControlView]);
 };
 
-setupDOM();
 
+//document.addEventListener('DOMContentLoaded', setupDOM);
+setupDOM()
 /*
  * Audio
  */

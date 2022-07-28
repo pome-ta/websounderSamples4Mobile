@@ -153,22 +153,24 @@ const setupDOM = () => {
     views.style.margin = '1rem auto';
   });
 
-  console.log(keyboardControlView);
+  
   // overAll DOM setup
+  setAppendChild([mainTitleHeader, mainControlView, keyboardControlView]);
+  
+  
+  // todo: Be sure to finish 'overAll DOM setup' before executing
   const keyboardSettings = {
-    // width: `${keyboardControlView.clientWidth}`,
-    width: `${document.body.clientWidth}`,
+    width: `${keyboardControlView.clientWidth}`,
     height: 176,
     start: 'A3',
     keyOctave: 2,
   };
   miniKeyboard = new MiniKey(keyboardControlView, keyboardSettings);
-  // miniKeyboard = new MiniKey();
-  setAppendChild([mainTitleHeader, mainControlView, keyboardControlView]);
+  
 };
 
-//document.addEventListener('DOMContentLoaded', setupDOM);
 setupDOM();
+
 /*
  * Audio
  */

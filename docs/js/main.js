@@ -33,12 +33,12 @@ function setupRangeToSectionInputValue(
   return [rangeSection, inputValue];
 }
 
-let isPlaying = 0;
+
 
 /* setup document node element */
-const switchPlayPause = ['Play', 'Pause'];
+
 const waveTypes = ['sine', 'square', 'sawtooth', 'triangle'];
-let playPauseButton;
+
 let volumeRangeValue, volumeRange;
 let typeSelect;
 let frequencyRangeValue, frequencyRange;
@@ -53,18 +53,6 @@ const setupDOM = () => {
 
   /* main controller */
   const setupMainController = () => {
-    // START / PAUSE
-    let playPauseSection;
-    const captionPlayPause = document.createTextNode(
-      switchPlayPause.join(' / ')
-    );
-    playPauseButton = createButton('sound', switchPlayPause[isPlaying]);
-    playPauseButton.style.width = '100%';
-    playPauseSection = setAppendChild(
-      [captionPlayPause, playPauseButton],
-      createSection()
-    );
-
     // VOLUME
     let volumeRangeSection;
     volumeRange = createInputRange({
@@ -123,7 +111,6 @@ const setupDOM = () => {
     );
 
     return [
-      playPauseSection,
       volumeRangeSection,
       waveTypeSection,
       frequencyRangeSection,
@@ -219,20 +206,6 @@ function updateControllers() {
  */
 const eventWrap = new EventWrapper();
 
-playPauseButton.addEventListener(eventWrap.start, () => {
-  isPlaying = isPlaying ^ 1;
-  if (isPlaying) {
-    oscillator = context.createOscillator();
-    oscillator.connect(gain).connect(context.destination);
-    //gain.connect(context.destination);
-    updateControllers();
-    oscillator.start(0);
-  } else {
-    oscillator.stop(0);
-  }
-  playPauseButton.textContent = switchPlayPause[isPlaying];
-});
-
 typeSelect.addEventListener('change', updateControllers);
 
 [volumeRange, frequencyRange, detuneRange].forEach((slider) =>
@@ -246,11 +219,12 @@ function initAudioContext() {
   document.removeEventListener(eventWrap.start, initAudioContext);
   context.resume();
 }
-//document.addEventListener(eventWrap.start, initAudioContext);
+document.addEventListener(eventWrap.start, initAudioContext);
 
 
 miniKeyboard.keyDown = (key) => {
-  const oscillator = context.createOscillator();
+  //const oscillator = context.createOscillator();
+  oscillator = context.createOscillator();
   oscillator.type = 'square';
   oscillator.frequency.value = key.frequency;
   oscillator.connect(gain);

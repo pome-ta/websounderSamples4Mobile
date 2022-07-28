@@ -44,6 +44,8 @@ let typeSelect;
 let frequencyRangeValue, frequencyRange;
 let detuneRangeValue, detuneRange;
 
+let miniKeyboard;
+
 const setupDOM = () => {
   const mainTitleHeader = document.createElement('h1');
   mainTitleHeader.textContent = 'OscillatorNode | サウンドの生成';
@@ -132,17 +134,7 @@ const setupDOM = () => {
   /* keyboard controller */
   const setupKeyboardController = () => {
     const synth = document.createElement('div');
-    const keyboardDiv = document.createElement('div');
-    //synth.appendChild(keyboardDiv);
-    const keyboardWidth = synth.clientWidth;
-    const keyboardSettings = {
-      width: `${keyboardWidth}`,
-      height: 176,
-      start: 'A3',
-      keyOctave: 2,
-    };
-    const miniKeyboard = new MiniKey(keyboardDiv, keyboardSettings);
-    return [synth]
+    return [synth];
   };
 
   /* article setting */
@@ -150,7 +142,7 @@ const setupDOM = () => {
     setupMainController(),
     document.createElement('article')
   );
-  
+
   const keyboardControlView = setAppendChild(
     setupKeyboardController(),
     document.createElement('article')
@@ -160,15 +152,23 @@ const setupDOM = () => {
     views.style.width = '92%';
     views.style.margin = '1rem auto';
   });
-  console.log(mainControlView.clientWidth)
 
+  console.log(keyboardControlView);
   // overAll DOM setup
-  setAppendChild([mainTitleHeader, mainControlView]);
+  const keyboardSettings = {
+    // width: `${keyboardControlView.clientWidth}`,
+    width: `${document.body.clientWidth}`,
+    height: 176,
+    start: 'A3',
+    keyOctave: 2,
+  };
+  miniKeyboard = new MiniKey(keyboardControlView, keyboardSettings);
+  // miniKeyboard = new MiniKey();
+  setAppendChild([mainTitleHeader, mainControlView, keyboardControlView]);
 };
 
-
 //document.addEventListener('DOMContentLoaded', setupDOM);
-setupDOM()
+setupDOM();
 /*
  * Audio
  */

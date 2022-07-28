@@ -160,7 +160,7 @@ const setupDOM = () => {
     views.style.width = '92%';
     views.style.margin = '1rem auto';
   });
-  console.log(mainControlView.clientWidth)
+  console.log(mainControlView.offsetWidth)
 
   // overAll DOM setup
   setAppendChild([mainTitleHeader, mainControlView]);

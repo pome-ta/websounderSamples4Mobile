@@ -153,11 +153,9 @@ const setupDOM = () => {
     views.style.margin = '1rem auto';
   });
 
-  
   // overAll DOM setup
   setAppendChild([mainTitleHeader, mainControlView, keyboardControlView]);
-  
-  
+
   // todo: Be sure to finish 'overAll DOM setup' before executing
   const keyboardSettings = {
     width: `${keyboardControlView.clientWidth}`,
@@ -166,7 +164,6 @@ const setupDOM = () => {
     keyOctave: 2,
   };
   miniKeyboard = new MiniKey(keyboardControlView, keyboardSettings);
-  
 };
 
 setupDOM();
@@ -251,3 +248,20 @@ function initAudioContext() {
 }
 //document.addEventListener(eventWrap.start, initAudioContext);
 
+
+miniKeyboard.keyDown = (key) => {
+  const oscillator = context.createOscillator();
+  oscillator.type = 'square';
+  oscillator.frequency.value = key.frequency;
+  oscillator.connect(gain);
+  oscillator.start(0);
+  key.osc = oscillator;
+};
+
+miniKeyboard.keyUp = (key) => {
+  if (key.osc) {
+    key.osc.stop(0);
+    key.osc.disconnect();
+    key.osc = null;
+  }
+};

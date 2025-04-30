@@ -226,6 +226,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewWillDisappear_')
+    self.wkWebView.reloadFromOrigin()
 
   @objc_method
   def viewDidDisappear_(self, animated: bool):
@@ -237,6 +238,7 @@ class WebViewController(UIViewController):
                  ctypes.c_bool,
                ])
     #print(f'\t{NSStringFromClass(__class__)}: viewDidDisappear_')
+    #self.wkWebView.reloadFromOrigin()
 
   @objc_method
   def didReceiveMemoryWarning(self):
@@ -325,7 +327,6 @@ if __name__ == '__main__':
   from rbedge.enumerations import UIModalPresentationStyle
 
   index_path = Path('./docs/index.html')
-  
 
   main_vc = WebViewController.alloc().initWithIndexPath_(index_path)
 
